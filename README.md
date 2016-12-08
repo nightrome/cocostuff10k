@@ -17,7 +17,7 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 
 Filename | Description | Size
 --- | --- | ---
-cocostuff-v1.0.zip | COCO-Stuff dataset version 1.0, including images, annotations and code examples | 2.6 GB
+[cocostuff-dataset-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-dataset-v1.0.zip) | COCO-Stuff dataset version 1.0, including images, annotations and code examples | 2.6 GB
 [cocostuff-readme.txt](https://github.com/nightrome/cocostuff/README.md) | This document | 3.3 KB
 
 ## Usage
@@ -36,10 +36,11 @@ The COCO-Stuff annotations are stored in separate .mat files per image. These fi
 
 ## Semantic segmentation models (coming soon)
 To encourage further research of stuff and things we provide trained semantic segmentation models for several state-of-the-art methods (see Sect. 4.4 in [1]).
+
 Filename | Description | Size
 --- | --- | ---
-cocostuff-fcn.zip [TODO] | FCN [3] model for Matconvnet-Calvin | [TODO]
-cocostuff-deeplab.zip [TODO] | DeepLab [4] model for deeplab-public-ver2 and Caffe | [TODO]
+[cocostuff-fcn.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) [TODO] | FCN [3] model for Matconvnet-Calvin | [TODO]
+[cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) [TODO] | DeepLab [4] model for deeplab-public-ver2 and Caffe | [TODO]
 
 ## Contact
 If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
