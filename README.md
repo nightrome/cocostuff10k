@@ -32,13 +32,20 @@ The COCO-Stuff annotations are stored in separate .mat files per image. These fi
 - *regionMapStuff:* A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
 - *regionLabelsStuff:* A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
 
-## Semantic segmentation models (coming soon)
+## Semantic segmentation models
 To encourage further research of stuff and things we provide trained semantic segmentation models for several state-of-the-art methods (see Sect. 4.4 in [1]).
 
-Filename | Description | Size
---- | --- | ---
-[cocostuff-fcn.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) [TODO] | FCN [3] model for Matconvnet-Calvin | [TODO]
-[cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) [TODO] | DeepLab [4] model for deeplab-public-ver2 and Caffe | [TODO]
+### Fully Convolutional Networks (FCN)
+Use the following steps to download and setup the FCN [3] semantic segmentation model trained on COCO-Stuff. It requires [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin):
+
+1. Download and install [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin).
+2. Download the model by running `models/cocostuff-fcn/install.m` in Matlab or manually download and unzip [cocostuff-fcn.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models` folder.
+
+### DeepLab
+Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
+
+1. Download and install [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
+2. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
 
 ## Contact
 If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
