@@ -1,7 +1,7 @@
 function[labelImage] = imageInsertBlobLabels(labelImage, labelMap, labelNames, varargin)
 % [labelImage] = imageInsertBlobLabels(labelImage, labelMap, labelNames, varargin)
 %
-% Uses textInserter (from Vision Toolbox) to insert a cell of strings into
+% Uses insertText (from Vision Toolbox) to insert a cell of strings into
 % the image. Each label is positioned at the center of mass of its blob.
 %
 % Test case (should output a red 'c' on a white image):
@@ -13,7 +13,7 @@ function[labelImage] = imageInsertBlobLabels(labelImage, labelMap, labelNames, v
 % outImage = imageInsertBlobLabels(labelImage, labelMap, labelNames, 'fontColor', [255, 0, 0], 'minComponentSize', 1);
 % imshow(outImage);
 %
-% Copyright by Holger Caesar, 2014
+% Copyright by Holger Caesar, 2016
 
 % Parse input
 p = inputParser;
@@ -102,9 +102,7 @@ for compIdx = 1 : compCount
     end
     
     % Place label here
-    textInserter = vision.TextInserter(labelName, 'Color', fontColor, ...
-        'Location', [xStart, yStart], 'FontSize', fontSize, 'Font',  'LucidaSansDemiBold');
-    labelImage = step(textInserter, labelImage);
+    labelImage = insertText(labelImage, [xStart, yStart], labelName, 'Font',  'LucidaSansDemiBold', 'FontSize', fontSize, 'TextColor', fontColor, 'BoxOpacity', 0.0, 'AnchorPoint', 'LeftTop');
     
     % Mark those pixels as used
     usedMap(yStart:yEnd, xStart:xEnd) = true;

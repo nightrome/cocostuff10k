@@ -1,6 +1,7 @@
 % exportImages()
 %
-% Writes a viewable image to data/output/preview/<UUN>
+% Writes a viewable preview image for each annotation to
+% data/output/preview/<user>.
 %
 % Copyright by Holger Caesar, 2016
 
@@ -42,20 +43,18 @@ for userIdx = 1 : userCount
     
     % Create colorMap
     rng(42);
-    stuffLabels = sort(datasetStuff.getLabelNames());
-    labelNames = ['unlabeled'; 'none'; 'things'; 'things'; stuffLabels];
-    stuffCount = numel(stuffLabels);
-    unlabeledColor = [1, 1, 1];
-    noneColor = [0, 0, 0];
+    stuffCount = numel(datasetStuff.getLabelNames());
+    unprocessedColor = [1, 1, 1];
+    unlabeledColor = [0, 0, 0];
     otherColors = jet(stuffCount+1);
     thingColor = otherColors(1, :);
     stuffColors = otherColors(2:end, :);
     stuffColors = stuffColors(randperm(stuffCount), :);
-    colorMap = [unlabeledColor; noneColor; thingColor; thingColor; stuffColors];
+    colorMap = [unprocessedColor; unlabeledColor; thingColor; thingColor; stuffColors];
     
     imageCount = numel(fileList);
     for imageIdx = 1 : imageCount
-        %fprintf('Writing image %d of %d for user %s...\n', imageIdx, imageCount, userName);
+        fprintf('Writing image %d of %d for user %s...\n', imageIdx, imageCount, userName);
         
         % Check if file exists
         fileName = fileList{imageIdx};
@@ -69,7 +68,11 @@ for userIdx = 1 : userCount
         % Get image and labelMap
         imagePath = fullfile(imageFolder, [imageName, '.jpg']);
         inPath = fullfile(annotationFolder, fileName);
-        inStruct = load(inPath, 'labelMap');
+        inStruct = load(inPath, 'labelMap', 'labelNames');
+        if ~exist('labelNames', 'var')
+            labelNames = inStruct.labelNames;
+            assert(size(colorMap, 1) == numel(labelNames));
+        end
         labelMap = inStruct.labelMap;
         imageLabelMap = ind2rgb(labelMap, colorMap);
         imageLabelMap = imageInsertBlobLabels(imageLabelMap, labelMap, labelNames);

@@ -109,15 +109,15 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Get dataset options
             stuffLabels = obj.datasetStuff.getLabelNames();
-            obj.labelNames = ['todo'; 'unlabeled'; 'thingsImp'; 'things'; stuffLabels];
+            obj.labelNames = ['unprocessed'; 'unlabeled'; 'thingsImp'; 'things'; stuffLabels];
             labelCount = numel(obj.labelNames);
-            todoColor = [1, 1, 1];
+            unprocessedColor = [1, 1, 1];
             unlabeledColor = [0, 0, 0];
             otherColors = jet(numel(stuffLabels)+1);
             thingColor = otherColors(1, :);
             stuffColors = otherColors(2:end, :);
             stuffColors = stuffColors(randperm(size(stuffColors, 1)), :);
-            obj.drawColors = [todoColor; unlabeledColor; thingColor; thingColor; stuffColors];
+            obj.drawColors = [unprocessedColor; unlabeledColor; thingColor; thingColor; stuffColors];
             obj.drawColor = obj.drawColors(obj.labelIdx, :);
             assert(size(obj.drawColors, 1) == labelCount);
             
@@ -184,7 +184,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Create options
             labelNamesPopup = obj.labelNames;
-            labelNamesPopup(strcmp(labelNamesPopup, 'todo')) = [];
+            labelNamesPopup(strcmp(labelNamesPopup, 'unprocessed')) = [];
             labelNamesPopup(strcmp(labelNamesPopup, 'thingsImp')) = [];
             obj.ui.popupLabel = uicontrol(obj.containerOptions, ...
                 'Style', 'popupmenu', ...
@@ -224,12 +224,15 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Show empty image
             axes(obj.ax);
             hold on;
-            colormap(obj.ax, obj.drawColors);
             
+            % Initialize handles with empty images
             obj.handleImage = imshow([]);
             obj.handleLabelMap = image([]);
             obj.handleOverlay = image([]);
             hold off;
+            
+            % Specify the colors for each label in the labelMap
+            colormap(obj.ax, obj.drawColors);
             
             % Set axis units
             obj.ax.Units = 'pixels';
@@ -466,7 +469,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.labelMapUndo = obj.handleLabelMap.CData;
             obj.labelRegionsUndo = obj.labelRegions;
             
-            % Set all labels to 1 (todo)
+            % Set all labels to 1 (unprocessed)
             obj.handleLabelMap.CData(obj.handleLabelMap.CData(:) == obj.labelIdx) = 1;
             obj.labelRegions(obj.labelRegions(:) == obj.labelIdx) = 1;
             
@@ -572,8 +575,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         
         function buttonPrevImageClick(obj)
             % Check if image is complete
-            if obj.checkTodo()
-                choice = questdlg('There are todo pixels. Would you like to continue?', 'Continue?');
+            if obj.checkUnprocessed()
+                choice = questdlg('There are unprocessed pixels. Would you like to continue?', 'Continue?');
                 switch choice
                     case 'Yes'
                         % do nothing
@@ -597,8 +600,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         
         function buttonJumpImageClick(obj)
             % Check if image is complete
-            if obj.checkTodo()
-                choice = questdlg('There are todo pixels. Would you like to continue?', 'Continue?');
+            if obj.checkUnprocessed()
+                choice = questdlg('There are unprocessed pixels. Would you like to continue?', 'Continue?');
                 switch choice
                     case 'Yes'
                         % do nothing
@@ -642,8 +645,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         
         function buttonNextImageClick(obj)
             % Check if image is complete
-            if obj.checkTodo()
-                choice = questdlg('There are todo pixels. Would you like to continue?', 'Continue?');
+            if obj.checkUnprocessed()
+                choice = questdlg('There are unprocessed pixels. Would you like to continue?', 'Continue?');
                 switch choice
                     case 'Yes'
                         % do nothing
@@ -665,7 +668,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.loadImage();
         end
         
-        function[res] = checkTodo(obj)
+        function[res] = checkUnprocessed(obj)
             res = any(obj.handleLabelMap.CData(:) == 1);
         end
         
@@ -718,7 +721,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 % Left click (set label)
                 obj.drawStatus = 1;
             elseif event.Button == 3
-                % Right click (set todo)
+                % Right click (set unprocessed)
                 obj.drawStatus = 2;
             elseif event.Button == 2
                 % Middle click (undo)
@@ -819,7 +822,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             if ~isempty(obj.timerImage)
                 timeImage = timeImage + toc(obj.timerImage);
             end
-            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v0.5 - %s - %s (%d / %d) - %.1fs', obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
+            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v0.6 - %s - %s (%d / %d) - %.1fs', obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
         end
         
         function figResize(obj, ~, ~)
