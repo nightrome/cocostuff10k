@@ -45,14 +45,16 @@ To encourage further research of stuff and things we provide trained semantic se
 ### Fully Convolutional Networks (FCN)
 Use the following steps to download and setup the FCN [3] semantic segmentation model trained on COCO-Stuff. It requires [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin):
 
-1. Download and install [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin).
+1. Download matconvnet-calvin: `git submodule update --init models/cocostuff-fcn`
+2. Compile and configure FCN following the [author's instructions](https://github.com/nightrome/matconvnet-calvin).
 2. Download the model by running `models/cocostuff-fcn/install.m` in Matlab or manually download and unzip [cocostuff-fcn.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models` folder.
 
 ### DeepLab
 Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
 
-1. Download and install [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
-2. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
+1. Download deeplab-public-ver2: `git submodule update --init models/cocostuff-deeplab`
+2. Compile and configure DeepLab following the [author's instructions](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
+3. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
 
 ## Annotation Tool
 
