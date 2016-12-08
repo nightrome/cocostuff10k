@@ -1,7 +1,7 @@
-classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and propertys can be added dynamicly
-    % Image annotation class.
+classdef CocoStuffAnnotator < handle & dynamicprops
+    % COCO-Stuff image annotation class.
     %
-    % Supports pixel and superpixel drawing.
+    % Supports superpixel drawing.
     % All point coordinates are [y, x]
     % Input: 1-9 for labels, +- for scale, left/right click for add/remove
     %
@@ -16,7 +16,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         ax
         ui
         handleImage
-        handleMap
+        handleLabelMap
         handleOverlay
         
         % Pick label specific
@@ -35,17 +35,14 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         drawOverwrite = false;
         drawSizes = [1, 2, 5, 10, 15, 20, 30, 50, 100]';
         drawSize = 1;
-        drawColors % 1 is none
+        drawColors % first is unlabeled
         drawColor
-        drawTransparency = 0.6;
+        drawNow = false;
+        labelMapTransparency = 0.6;
         overlayTransparency = 0.2;
         timerTotal
         timerImage
         timeImagePrevious
-        
-        enablePixelDrawing = false;
-        enableMagicWand = false;
-        enableGrabCut = false;
         
         % Administrative
         imageList
@@ -112,15 +109,15 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             
             % Get dataset options
             stuffLabels = obj.datasetStuff.getLabelNames();
-            obj.labelNames = ['unlabeled'; 'none'; 'thingsImp'; 'things'; stuffLabels];
+            obj.labelNames = ['todo'; 'unlabeled'; 'thingsImp'; 'things'; stuffLabels];
             labelCount = numel(obj.labelNames);
-            unlabeledColor = [1, 1, 1];
-            noneColor = [0, 0, 0];
+            todoColor = [1, 1, 1];
+            unlabeledColor = [0, 0, 0];
             otherColors = jet(numel(stuffLabels)+1);
             thingColor = otherColors(1, :);
             stuffColors = otherColors(2:end, :);
             stuffColors = stuffColors(randperm(size(stuffColors, 1)), :);
-            obj.drawColors = [unlabeledColor; noneColor; thingColor; thingColor; stuffColors];
+            obj.drawColors = [todoColor; unlabeledColor; thingColor; thingColor; stuffColors];
             obj.drawColor = obj.drawColors(obj.labelIdx, :);
             assert(size(obj.drawColors, 1) == labelCount);
             
@@ -155,36 +152,6 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                 'Callback', @(handle, event) obj.buttonPickLabelClick(), ...
                 'Tag', 'buttonPickLabel');
             
-            if obj.enablePixelDrawing
-                obj.ui.buttonPixelDraw = uicontrol(obj.containerButtons, ...
-                    'Style', 'togglebutton', ...
-                    'String', 'Pixel drawing', ...
-                    'Callback', @(handle, event) obj.buttonPixelDrawClick(), ...
-                    'Tag', 'buttonPixelDraw');
-                obj.ui.buttonPixelDraw.Value = 0;
-                
-                obj.ui.buttonDrawSuperpixelDraw = uicontrol(obj.containerButtons, ...
-                    'Style', 'togglebutton', ...
-                    'String', 'Superpixel drawing', ...
-                    'Callback', @(handle, event) obj.buttonSuperpixelDrawClick(), ...
-                    'Tag', 'buttonSuperpixelDraw');
-                obj.ui.buttonSuperpixelDraw.Value = 1;
-            end
-            
-            if obj.enableGrabCut
-                obj.ui.buttonLearnLabel = uicontrol(obj.containerButtons, ...
-                    'String', 'Learn label', ...
-                    'Callback', @(handle, event) obj.buttonLearnLabelClick(), ...
-                    'Tag', 'buttonLearnLabel');
-            end
-            
-            if obj.enableMagicWand
-                obj.ui.buttonMagicWand = uicontrol(obj.containerButtons, ...
-                    'String', 'Magic wand', ...
-                    'Callback', @(handle, event) obj.buttonMagicWandClick(), ...
-                    'Tag', 'buttonMagicWand');
-            end
-            
             obj.ui.buttonClearLabel = uicontrol(obj.containerButtons, ...
                 'String', 'Clear label', ...
                 'Callback', @(handle, event) obj.buttonClearLabelClick(), ...
@@ -217,7 +184,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             
             % Create options
             labelNamesPopup = obj.labelNames;
-            labelNamesPopup(strcmp(labelNamesPopup, 'unlabeled')) = [];
+            labelNamesPopup(strcmp(labelNamesPopup, 'todo')) = [];
             labelNamesPopup(strcmp(labelNamesPopup, 'thingsImp')) = [];
             obj.ui.popupLabel = uicontrol(obj.containerOptions, ...
                 'Style', 'popupmenu', ...
@@ -238,14 +205,14 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             
             obj.ui.sliderMapTransparency = uicontrol(obj.containerOptions, ...
                 'Style', 'slider', ...
-                'Min', 0, 'Max', 100, 'Value', 100 * obj.drawTransparency, ...
+                'Min', 0, 'Max', 100, 'Value', 100 * obj.labelMapTransparency, ...
                 'Callback', @(handle, event) sliderMapTransparencyChange(obj, handle, event));
             
             obj.ui.sliderOverlayTransparency = uicontrol(obj.containerOptions, ...
                 'Style', 'slider', ...
                 'Min', 0, 'Max', 100, 'Value', 100 * obj.overlayTransparency, ...
                 'Callback', @(handle, event) sliderOverlayTransparencyChange(obj, handle, event));
-
+            
             % Make sure labelIdx is the same everywhere
             obj.setLabelIdx(obj.labelIdx);
             
@@ -260,15 +227,15 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             colormap(obj.ax, obj.drawColors);
             
             obj.handleImage = imshow([]);
-            obj.handleMap = image([]); %#ok<CPROP>
-            obj.handleOverlay = image([]); %#ok<CPROP>
+            obj.handleLabelMap = image([]);
+            obj.handleOverlay = image([]);
             hold off;
             
             % Set axis units
             obj.ax.Units = 'pixels';
             
             % Image event callbacks
-            set(obj.handleMap, 'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
+            set(obj.handleLabelMap, 'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
             set(obj.handleOverlay, 'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
             
             % Figure event callbacks
@@ -331,13 +298,13 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             
             % Show images
             obj.handleImage.CData = obj.image;
-            obj.handleMap.CData = labelMap;
+            obj.handleLabelMap.CData = labelMap;
             
             % Create labelRegions
             obj.transferPixelToSuperpixelLabels();
             
             % Set undo data
-            obj.labelMapUndo = obj.handleMap.CData;
+            obj.labelMapUndo = obj.handleLabelMap.CData;
             obj.labelRegionsUndo = obj.labelRegions;
             
             % Update alpha data
@@ -363,7 +330,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                 % Make figure active again
                 figure(obj.figLabelHierarchy);
             end
-                        
+            
             % Get label hierarchy
             [nodes, cats, heights] = obj.datasetStuff.getClassHierarchy();
             
@@ -409,13 +376,13 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             nodes = map(nodes);
             
             % Plot them
-            ax = axes('Parent', obj.figLabelHierarchy, 'Units', 'Norm');
-            axis(ax, 'off');
+            curAx = axes('Parent', obj.figLabelHierarchy, 'Units', 'Norm');
+            axis(curAx, 'off');
             treeplot(nodes');
             if isIndoors == 1
-                set(ax, 'Position', [0, 0, 0.5, 1]);
+                set(curAx, 'Position', [0, 0, 0.5, 1]);
             else
-                set(ax, 'Position', [0.5, 0, 0.5, 1]);
+                set(curAx, 'Position', [0.5, 0, 0.5, 1]);
             end
             [xs, ys] = treelayout(nodes);
             
@@ -423,8 +390,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             isLeaf = ys == min(ys);
             textInner = text(xs(~isLeaf) + 0.01, ys(~isLeaf) - 0.025, cats(~isLeaf), 'VerticalAlignment', 'Bottom', 'HorizontalAlignment', 'right');
             textLeaf  = text(xs( isLeaf) - 0.01, ys( isLeaf) - 0.02,  cats( isLeaf), 'VerticalAlignment', 'Bottom', 'HorizontalAlignment', 'left');
-            set(ax, 'XTick', [], 'YTick', [], 'Units', 'Normalized');
-            ax.XLabel.String = '';
+            set(curAx, 'XTick', [], 'YTick', [], 'Units', 'Normalized');
+            curAx.XLabel.String = '';
             
             % Rotate view
             camroll(90);
@@ -442,7 +409,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                 obj.xsLabelHierarchyIn = xs;
                 
                 % Register callbacks
-                set(ax, 'ButtonDownFcn', @(handle, event) pickLabelInClick(obj, handle, event));
+                set(curAx, 'ButtonDownFcn', @(handle, event) pickLabelInClick(obj, handle, event));
                 set(textInner, 'ButtonDownFcn', @(handle, event) pickLabelInClick(obj, handle, event));
                 set(textLeaf, 'ButtonDownFcn', @(handle, event) pickLabelInClick(obj, handle, event));
             else
@@ -452,10 +419,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                 obj.xsLabelHierarchyOut = xs;
                 
                 % Register callbacks
-                set(ax, 'ButtonDownFcn', @(handle, event) pickLabelOutClick(obj, handle, event));
+                set(curAx, 'ButtonDownFcn', @(handle, event) pickLabelOutClick(obj, handle, event));
                 set(textInner, 'ButtonDownFcn', @(handle, event) pickLabelOutClick(obj, handle, event));
                 set(textLeaf, 'ButtonDownFcn', @(handle, event) pickLabelOutClick(obj, handle, event));
-            end            
+            end
         end
         
         function pickLabelInClick(obj, ~, event)
@@ -466,10 +433,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             [~, minDistInd] = min(dists);
             
             labelName = obj.categoriesLabelHierarchyIn(minDistInd);
-            labelIdx = find(strcmp(obj.labelNames, labelName));
+            labelIdx = find(strcmp(obj.labelNames, labelName)); %#ok<PROPLC>
             
             % Set globally
-            obj.setLabelIdx(labelIdx); %#ok<FNDSB>
+            obj.setLabelIdx(labelIdx); %#ok<PROPLC,FNDSB>
         end
         
         function pickLabelOutClick(obj, ~, event)
@@ -480,17 +447,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             [~, minDistInd] = min(dists);
             
             labelName = obj.categoriesLabelHierarchyOut(minDistInd);
-            labelIdx = find(strcmp(obj.labelNames, labelName));
+            labelIdx = find(strcmp(obj.labelNames, labelName)); %#ok<PROPLC>
             
             % Set globally
-            obj.setLabelIdx(labelIdx); %#ok<FNDSB>
-        end
-        
-        function buttonPointDrawClick(obj, handle, event) %#ok<INUSD>
-            obj.drawMode = 'pixelDraw';
-            
-            obj.ui.buttonPointDraw.Value = 1;
-            obj.ui.buttonSuperpixelDraw.Value = 0;
+            obj.setLabelIdx(labelIdx); %#ok<PROPLC,FNDSB>
         end
         
         function buttonSuperpixelDrawClick(obj)
@@ -500,83 +460,14 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             obj.ui.buttonSuperpixelDraw.Value = 1;
         end
         
-        function buttonLearnLabelClick(obj)
-            methodTimer = tic;
-            
-            % Check if there are sp annotations for current label
-            initSpMask = obj.labelRegions == obj.labelIdx;
-            if obj.labelIdx == 1
-                msgbox('Cannot learn "unlabeled" label!', 'Error', 'error', 'replace');
-                return;
-            end
-            if ~any(initSpMask)
-                msgbox('Need to annotate superpixels with current label before learning!', 'Error', 'error', 'replace');
-                return;
-            end
-            
-            % Options
-            maxIterations = 500;
-            
-            % Run grabcut
-            splabels = uint16(obj.regionMap);
-            image = im2uint8(obj.image);
-            
-            if false
-                % Settings
-                constrainToInit = false; %#ok<UNRCH>
-                
-                % Hard mask
-                seg = segment_superpixels_from_hardmask(spstats, initSpMask, constrainToInit, maxIterations);
-            else
-                % Settings
-                neutralVal = 0.5;
-                threshold = 0.5;
-                posVal = 1.0;
-                negVal = 0.0;
-                
-                % Soft mask
-                labelMap = obj.handleMap.CData;
-                mask = ones(size(labelMap)) * neutralVal;
-                mask(labelMap == obj.labelIdx) = posVal;
-                mask(labelMap ~= obj.labelIdx & labelMap ~= 1) = negVal;
-                
-                maskstat = sp_maskstat(mask, splabels);
-                spstats = sp_stats_for_grabcut(image, splabels);
-                seg = segment_superpixels_with_softmask(spstats, maskstat, threshold, maxIterations);
-            end
-            
-            % Update superpixels
-            spInds = find(seg & obj.labelRegions == 1); % Only label prev. unlabeled pixels
-            spIndsIsOverwrite = (obj.drawOverwrite | obj.labelRegions(spInds) == 1) & obj.labelRegions(spInds) ~= 3;
-            obj.labelRegionsUndo = obj.labelRegions;
-            obj.labelRegions(spInds(spIndsIsOverwrite)) = obj.labelIdx;
-            
-            % Update shown pixels
-            mask = ismember(obj.regionMap, spInds);
-            [selY, selX] = find(mask);
-            inds = sub2ind(obj.imageSize(1:2), selY, selX);
-            indsIsOverwrite = (obj.drawOverwrite | obj.handleMap.CData(inds) == 1) & obj.handleMap.CData(inds) ~= 3;
-            obj.labelMapUndo = obj.handleMap.CData;
-            obj.handleMap.CData(inds(indsIsOverwrite)) = obj.labelIdx;
-            obj.updateAlphaData();
-            
-            % Print time
-            methodTime = toc(methodTimer);
-            fprintf('Learned annotation took %.1fs.\n', methodTime);
-        end
-        
-        function buttonMagicWandClick(obj)
-            obj.drawMode = 'magicWand';
-        end
-        
         function buttonClearLabelClick(obj)
             
             % Save data for undo feature
-            obj.labelMapUndo = obj.handleMap.CData;
+            obj.labelMapUndo = obj.handleLabelMap.CData;
             obj.labelRegionsUndo = obj.labelRegions;
             
-            % Set all labels to 1 (unlabeled)
-            obj.handleMap.CData(obj.handleMap.CData(:) == obj.labelIdx) = 1;
+            % Set all labels to 1 (todo)
+            obj.handleLabelMap.CData(obj.handleLabelMap.CData(:) == obj.labelIdx) = 1;
             obj.labelRegions(obj.labelRegions(:) == obj.labelIdx) = 1;
             
             obj.updateAlphaData();
@@ -598,23 +489,23 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             end
             
             % Check if label is present
-            if ~ismember(oldLabelIdx, obj.handleMap.CData)
+            if ~ismember(oldLabelIdx, obj.handleLabelMap.CData)
                 msgbox(sprintf('Error: No pixel has the label: %s', oldLabel), 'Error','error');
                 return;
             end
             
             % Save labels for undo feature
-            obj.labelMapUndo = obj.handleMap.CData;
+            obj.labelMapUndo = obj.handleLabelMap.CData;
             obj.labelRegionsUndo = obj.labelRegions;
             
             % Swap labels
-            obj.handleMap.CData(obj.handleMap.CData == oldLabelIdx) = newLabelIdx;
+            obj.handleLabelMap.CData(obj.handleLabelMap.CData == oldLabelIdx) = newLabelIdx;
             obj.labelRegions(obj.labelRegions == oldLabelIdx) = newLabelIdx;
         end
         
         function saveMask(obj)
             % Check if anything was annotated
-            labelMap = obj.handleMap.CData;
+            labelMap = obj.handleLabelMap.CData;
             maskPath = fullfile(obj.maskFolder, sprintf('mask-%s.mat', obj.imageName));
             if all(labelMap(:) == 1)
                 fprintf('Not saving annotation for unedited image %s...\n', maskPath);
@@ -635,7 +526,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             saveStruct.labelNames = obj.labelNames;
             saveStruct.timeTotal = toc(obj.timerTotal);
             saveStruct.timeImage = obj.timeImagePrevious + toc(obj.timerImage);
-            saveStruct.userName = obj.userName;
+            saveStruct.userName = obj.userName; %#ok<STRNU>
             save(maskPath, '-struct', 'saveStruct', '-v7.3');
         end
         
@@ -649,7 +540,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             regionCount = max(obj.regionMap(:));
             obj.labelRegions = ones(regionCount, 1);
             
-            labelMap = obj.handleMap.CData;
+            labelMap = obj.handleLabelMap.CData;
             relPixMap = labelMap ~= 1;
             relSPs = unique(obj.regionMap(relPixMap));
             for relSpIdx = 1 : numel(relSPs)
@@ -665,11 +556,11 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         
         function buttonUndoClick(obj)
             % Store undo info to redo
-            tempMap = obj.handleMap.CData;
+            tempMap = obj.handleLabelMap.CData;
             tempRegions = obj.labelRegions;
             
             % Undo last drawing action (or clear label)
-            obj.handleMap.CData = obj.labelMapUndo;
+            obj.handleLabelMap.CData = obj.labelMapUndo;
             obj.labelRegions = obj.labelRegionsUndo;
             
             % Save temp maps
@@ -681,8 +572,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         
         function buttonPrevImageClick(obj)
             % Check if image is complete
-            if obj.checkUnlabeled()
-                choice = questdlg('There are unlabeled pixels. Would you like to continue?', 'Continue?');
+            if obj.checkTodo()
+                choice = questdlg('There are todo pixels. Would you like to continue?', 'Continue?');
                 switch choice
                     case 'Yes'
                         % do nothing
@@ -706,8 +597,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         
         function buttonJumpImageClick(obj)
             % Check if image is complete
-            if obj.checkUnlabeled()
-                choice = questdlg('There are unlabeled pixels. Would you like to continue?', 'Continue?');
+            if obj.checkTodo()
+                choice = questdlg('There are todo pixels. Would you like to continue?', 'Continue?');
                 switch choice
                     case 'Yes'
                         % do nothing
@@ -751,8 +642,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         
         function buttonNextImageClick(obj)
             % Check if image is complete
-            if obj.checkUnlabeled()
-                choice = questdlg('There are unlabeled pixels. Would you like to continue?', 'Continue?');
+            if obj.checkTodo()
+                choice = questdlg('There are todo pixels. Would you like to continue?', 'Continue?');
                 switch choice
                     case 'Yes'
                         % do nothing
@@ -774,8 +665,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             obj.loadImage();
         end
         
-        function[res] = checkUnlabeled(obj)            
-            res = any(obj.handleMap.CData(:) == 1);
+        function[res] = checkTodo(obj)
+            res = any(obj.handleLabelMap.CData(:) == 1);
         end
         
         function popupLabelSelect(obj, handle, event) %#ok<INUSD>
@@ -783,8 +674,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
             labels = get(handle, 'string');
             selection = get(handle, 'value');
             label = labels{selection};
-            labelIdx = find(strcmp(obj.labelNames, label));
-            obj.setLabelIdx(labelIdx); %#ok<FNDSB>
+            labelIdx = find(strcmp(obj.labelNames, label)); %#ok<PROPLC>
+            obj.setLabelIdx(labelIdx); %#ok<PROPLC,FNDSB>
         end
         
         function setLabelIdx(obj, labelIdx)
@@ -812,7 +703,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         end
         
         function sliderMapTransparencyChange(obj, ~, event)
-            obj.drawTransparency = event.Source.Value / 100;
+            obj.labelMapTransparency = event.Source.Value / 100;
             obj.updateAlphaData();
         end
         
@@ -827,7 +718,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                 % Left click (set label)
                 obj.drawStatus = 1;
             elseif event.Button == 3
-                % Right click (set unlabeled)
+                % Right click (set todo)
                 obj.drawStatus = 2;
             elseif event.Button == 2
                 % Middle click (undo)
@@ -843,31 +734,27 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         function drawPos(obj, pos)
             if obj.drawStatus ~= 0
                 if strcmp(obj.drawMode, 'pickLabel')
-                    labelIdx = obj.handleMap.CData(pos(1), pos(2));
+                    labelIdx = obj.handleLabelMap.CData(pos(1), pos(2)); %#ok<PROPLC>
                     
-                    if labelIdx ~= 1
+                    if labelIdx ~= 1 %#ok<PROPLC>
                         % Correct from read-only things to addable things
-                        if labelIdx == 3
-                            labelIdx = 4;
+                        if labelIdx == 3 %#ok<PROPLC>
+                            labelIdx = 4; %#ok<PROPLC>
                         end
                         
                         % Update labelIdx globally
-                        obj.setLabelIdx(labelIdx);
+                        obj.setLabelIdx(labelIdx); %#ok<PROPLC>
                     end
-                        
+                    
                     % Set to drawing mode
                     obj.drawMode = 'superpixelDraw';
-                elseif strcmp(obj.drawMode, 'magicWand')
-                    % Compute region adjacency matrix
-                    
-                    %TODO
                 else
                     if obj.drawStatus == 1
-                        labelIdx = obj.labelIdx;
+                        labelIdx = obj.labelIdx; %#ok<PROPLC>
                     elseif obj.drawStatus == 2
-                        labelIdx = 1;
+                        labelIdx = 1; %#ok<PROPLC>
                     end
-                
+                    
                     % Draw current circle on pixels or superpixels
                     if false
                         % Square
@@ -885,26 +772,21 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                         selY = YS(valid);
                     end
                     
-                    if strcmp(obj.drawMode, 'pixelDraw')
-                        inds = sub2ind(obj.imageSize(1:2), selY, selX);
-                        indsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.handleMap.CData(inds) == 1) & obj.handleMap.CData(inds) ~= 3;
-                        obj.labelMapUndo = obj.handleMap.CData;
-                        obj.handleMap.CData(inds(indsIsOverwrite)) = labelIdx;
-                    elseif strcmp(obj.drawMode, 'superpixelDraw')
+                    if strcmp(obj.drawMode, 'superpixelDraw')
                         % Find selected superpixel and create its mask
                         regionMapInds = sub2ind(size(obj.regionMap), selY, selX);
                         spInds = unique(obj.regionMap(regionMapInds));
                         mask = ismember(obj.regionMap, spInds);
                         [selY, selX] = find(mask);
                         inds = sub2ind(obj.imageSize(1:2), selY, selX);
-                        indsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.handleMap.CData(inds) == 1) & obj.handleMap.CData(inds) ~= 3;
-                        obj.labelMapUndo = obj.handleMap.CData;
-                        obj.handleMap.CData(inds(indsIsOverwrite)) = labelIdx;
+                        indsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.handleLabelMap.CData(inds) == 1) & obj.handleLabelMap.CData(inds) ~= 3; %#ok<PROPLC>
+                        obj.labelMapUndo = obj.handleLabelMap.CData;
+                        obj.handleLabelMap.CData(inds(indsIsOverwrite)) = labelIdx; %#ok<PROPLC>
                         
                         % Set superpixel labels
-                        spIndsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.labelRegions(spInds) == 1) & obj.labelRegions(spInds) ~= 3;
+                        spIndsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.labelRegions(spInds) == 1) & obj.labelRegions(spInds) ~= 3; %#ok<PROPLC>
                         obj.labelRegionsUndo = obj.labelRegions;
-                        obj.labelRegions(spInds(spIndsIsOverwrite)) = labelIdx;
+                        obj.labelRegions(spInds(spIndsIsOverwrite)) = labelIdx; %#ok<PROPLC>
                     end
                     
                     % Update alpha data
@@ -914,7 +796,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
         end
         
         function updateAlphaData(obj)
-            set(obj.handleMap, 'AlphaData', obj.drawTransparency * double(obj.handleMap.CData ~= 1));
+            set(obj.handleLabelMap, 'AlphaData', obj.labelMapTransparency * double(obj.handleLabelMap.CData ~= 1));
             set(obj.handleOverlay, 'AlphaData', obj.overlayTransparency * obj.regionBoundaries);
         end
         
@@ -971,7 +853,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops  %this is a handle and prope
                     % Button next image
                     obj.buttonNextImageClick();
                 elseif strcmp(event.Character, '1')
-                    % None class
+                    % Unlabeled class
                     obj.setLabelIdx(2);
                 elseif strcmp(event.Character, '2')
                     % Things class
