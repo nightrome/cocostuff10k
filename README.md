@@ -78,9 +78,9 @@ In *International Conference on Learning Representations* (ICLR), 2015.<br />
 
 ### Licensing
 COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not in any form endorse this work. Different licenses apply:
-- COCO images: Flickr Terms of use
-- COCO annotations: Creative Commons Attribution 4.0 License
-- COCO-Stuff annotations & code: Creative Commons Attribution 4.0 License
+- COCO images: [Flickr Terms of use](http://mscoco.org/terms_of_use/)
+- COCO annotations: [Creative Commons Attribution 4.0 License](http://mscoco.org/terms_of_use/)
+- COCO-Stuff annotations & code: [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/legalcode)
 
 ### Contact
 If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
