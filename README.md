@@ -20,8 +20,9 @@ To use the COCO-Stuff dataset, please follow these steps:
 
 1. Download or clone this repository using git: `git clone https://github.com/nightrome/cocostuff.git`
 2. Open the dataset folder in your shell: `cd cocostuff`
-3. Run the file `dataset/code/demo_cocoStuff.m` in Matlab
-4. This will download the [dataset files](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip) and display an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
+3. Run the demo script in Matlab `dataset/code/demo_cocoStuff.m`
+4. This script will automatically download the [dataset files](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip). If you do not have Matlab, you will need to manually download and unpack the `annotations`, `images` and `imageLists` folders in to the `dataset` folder.
+5. Display an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
 
 ### File format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
