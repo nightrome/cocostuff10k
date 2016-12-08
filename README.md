@@ -28,11 +28,11 @@ To use the COCO-Stuff dataset, please follow these steps:
 
 ## File format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
-- S: The pixel-wise label map of size [height x width]. For use in Matlab all label indices start from 1
-- names: The names of the 172 classes in COCO-Stuff. 1 is the class 'unlabeled', 2-81 are things and 82-172 are stuff classes.
-- captions: Image captions from [2] that are annotated by 5 distinct humans on average.
-- regionMapStuff: A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
-- regionLabelsStuff: A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
+- *S:* The pixel-wise label map of size [height x width]. For use in Matlab all label indices start from 1
+- *names:* The names of the 172 classes in COCO-Stuff. 1 is the class 'unlabeled', 2-81 are things and 82-172 are stuff classes.
+- *captions:* Image captions from [2] that are annotated by 5 distinct humans on average.
+- *regionMapStuff:* A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
+- *regionLabelsStuff:* A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
 
 ## Semantic segmentation models (coming soon)
 To encourage further research of stuff and things we provide trained semantic segmentation models for several state-of-the-art methods (see Sect. 4.4 in [1]).
@@ -54,16 +54,16 @@ COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not 
 ## References
 1) [COCO-Stuff: Thing and Stuff Classes in Context](arxiv) [TODO]<br />
 H. Caesar, J. Uijlings, V. Ferrari,<br />
-In arXiv preprint arXiv:1506.xxx, 2016.<br />
+In *arXiv preprint arXiv:1506.xxx*, 2016.<br />
 
 2) [Microsoft COCO: Common Objects in Context](https://arxiv.org/abs/1405.0312)<br />
 T.-Y. Lin, M. Maire, S. Belongie et al.,<br />
-In European Conference in Computer Vision (ECCV), 2014.<br />
+In *European Conference in Computer Vision* (ECCV), 2014.<br />
 
 3) [Fully convolutional networks for semantic segmentation](http://www.cv-foundation.org/openaccess/content_cvpr_2015/html/Long_Fully_Convolutional_Networks_2015_CVPR_paper.html)<br />
 J. Long, E. Shelhammer and T. Darrell,<br />
-in Computer Vision and Pattern Recognition (CVPR), 2015.<br />
+in *Computer Vision and Pattern Recognition* (CVPR), 2015.<br />
 
 4) [Semantic image segmentation with deep convolutional nets and fully connected CRFs](https://arxiv.org/abs/1412.7062)<br />
 L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy and A. L. Yuille,<br />
-In International Conference on Learning Representations (ICLR), 2015.<br />
+In *International Conference on Learning Representations* (ICLR), 2015.<br />
