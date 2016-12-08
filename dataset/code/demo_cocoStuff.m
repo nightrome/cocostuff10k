@@ -1,22 +1,27 @@
 % demo_cocoStuff()
 %
 % Shows the basic usage of the COCO-Stuff dataset.
-% Loads an image, the ground-truth annotations and captions.
+% The scripts starts by downloading the dataset files if necessary.
+% Then it loads an image, the ground-truth annotations and captions.
 % Matlab's Vision Toolbox is required to display the captions.
 %
 % Copyright by Holger Caesar, 2016
 
+% Download the COCO-Stuff data (annotations, images, imageLists,)
+downloadData();
+
 % Get images
-imageListPath = fullfile(cocoStuff_root(), 'imageLists', 'all.txt');
+datasetFolder = cocoStuff_root();
+imageListPath = fullfile(datasetFolder, 'imageLists', 'all.txt');
 imageList = textread(imageListPath, '%s'); %#ok<DTXTRD>
 
 % Load an image
 imageName = imageList{1};
-imagePath = fullfile(cocoStuff_root(), 'images', [imageName, '.jpg']);
+imagePath = fullfile(datasetFolder, 'images', [imageName, '.jpg']);
 image = imread(imagePath);
 
 % Load annotations
-labelPath = fullfile(cocoStuff_root(), 'annotations', [imageName, '.mat']);
+labelPath = fullfile(datasetFolder, 'annotations', [imageName, '.mat']);
 labelStruct = load(labelPath);
 labelMap = labelStruct.S;
 labelNames = labelStruct.names;
