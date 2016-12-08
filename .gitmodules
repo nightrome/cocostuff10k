@@ -1,0 +1,3 @@
+[submodule "models/cocostuff-deeplab/deeplab-public-ver2"]
+	path = models/cocostuff-deeplab/deeplab-public-ver2
+	url = https://bitbucket.org/aquariusjay/deeplab-public-ver2
