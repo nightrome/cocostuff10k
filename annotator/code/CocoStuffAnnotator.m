@@ -109,7 +109,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Get dataset options
             stuffLabels = obj.datasetStuff.getLabelNames();
-            obj.labelNames = ['unprocessed'; 'unlabeled'; 'thingsImp'; 'things'; stuffLabels];
+            obj.labelNames = ['unprocessed'; 'unlabeled'; 'things'; 'thingsAdded'; stuffLabels];
             labelCount = numel(obj.labelNames);
             unprocessedColor = [1, 1, 1];
             unlabeledColor = [0, 0, 0];
@@ -185,7 +185,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Create options
             labelNamesPopup = obj.labelNames;
             labelNamesPopup(strcmp(labelNamesPopup, 'unprocessed')) = [];
-            labelNamesPopup(strcmp(labelNamesPopup, 'thingsImp')) = [];
+            labelNamesPopup(strcmp(labelNamesPopup, 'things')) = [];
             obj.ui.popupLabel = uicontrol(obj.containerOptions, ...
                 'Style', 'popupmenu', ...
                 'String', labelNamesPopup, ...

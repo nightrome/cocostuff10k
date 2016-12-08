@@ -1,4 +1,4 @@
-% exportImages()
+function exportImages()
 %
 % Writes a viewable preview image for each annotation to
 % data/output/preview/<user>.
@@ -74,17 +74,17 @@ for userIdx = 1 : userCount
             assert(size(colorMap, 1) == numel(labelNames));
         end
         labelMap = inStruct.labelMap;
-        imageLabelMap = ind2rgb(labelMap, colorMap);
-        imageLabelMap = imageInsertBlobLabels(imageLabelMap, labelMap, labelNames);
+        labelMapIm = ind2rgb(labelMap, colorMap);
+        labelMapIm = imageInsertBlobLabels(labelMapIm, labelMap, labelNames);
         image = im2double(imread(imagePath));
         if size(image, 3) == 1
             image = cat(3, image, image, image);
         end
-        if size(image, 1) ~= size(imageLabelMap, 1) || size(image, 2) ~= size(imageLabelMap, 2)
+        if size(image, 1) ~= size(labelMapIm, 1) || size(image, 2) ~= size(labelMapIm, 2)
             fprintf('Warning: Wrong image size! Skipping %s\n', imageName);
             continue;
         end
-        outImage = [image, imageLabelMap];
+        outImage = [image, labelMapIm];
         
         % Write to image
         imwrite(outImage, outPath);
