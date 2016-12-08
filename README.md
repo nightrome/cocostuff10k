@@ -45,14 +45,16 @@ To encourage further research of stuff and things we provide trained semantic se
 ### Fully Convolutional Networks (FCN)
 Use the following steps to download and setup the FCN [3] semantic segmentation model trained on COCO-Stuff. It requires [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin):
 
-1. Download and install [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin).
+1. Download matconvnet-calvin: `git submodule update --init models/cocostuff-fcn`
+2. Compile and configure FCN following the [author's instructions](https://github.com/nightrome/matconvnet-calvin).
 2. Download the model by running `models/cocostuff-fcn/install.m` in Matlab or manually download and unzip [cocostuff-fcn.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models` folder.
 
 ### DeepLab
 Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
 
-1. Download and install [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
-2. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
+1. Download deeplab-public-ver2: `git submodule update --init models/cocostuff-deeplab`
+2. Compile and configure DeepLab following the [author's instructions](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
+3. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
 
 ## Annotation Tool
 
@@ -76,9 +78,9 @@ In *International Conference on Learning Representations* (ICLR), 2015.<br />
 
 ### Licensing
 COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not in any form endorse this work. Different licenses apply:
-- COCO images: Flickr Terms of use
-- COCO annotations: Creative Commons Attribution 4.0 License
-- COCO-Stuff annotations & code: Creative Commons Attribution 4.0 License
+- COCO images: [Flickr Terms of use](http://mscoco.org/terms_of_use/)
+- COCO annotations: [Creative Commons Attribution 4.0 License](http://mscoco.org/terms_of_use/)
+- COCO-Stuff annotations & code: [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/legalcode)
 
 ### Contact
 If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
