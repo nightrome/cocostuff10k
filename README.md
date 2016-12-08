@@ -5,6 +5,13 @@
 <img src="http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-examples.png" alt="COCO-Stuff example annotations" width="100%">
 Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the popular COCO [2] dataset with pixel-level stuff annotations. These annotations can be used for scene understanding tasks like semantic segmentation, object detection and image captioning.
 
+## Overview
+- [Highlights](#highlights)
+- [Dataset](#dataset)
+- [Semantic Segmentation Models](#semantic-segmentation-models)
+- [Annotation Tool](#annotation-tool)
+- [Misc](#misc)
+
 ## Highlights
 - 10,000 complex images from [2]
 - Dense pixel-level annotations
@@ -32,7 +39,7 @@ The COCO-Stuff annotations are stored in separate .mat files per image. These fi
 - *regionMapStuff:* A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
 - *regionLabelsStuff:* A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
 
-## Semantic segmentation models
+## Semantic Segmentation Models
 To encourage further research of stuff and things we provide trained semantic segmentation models for several state-of-the-art methods (see Sect. 4.4 in [1]).
 
 ### Fully Convolutional Networks (FCN)
@@ -47,16 +54,10 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
 1. Download and install [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
 2. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
 
-## Contact
-If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
+## Annotation Tool
 
-## Licensing
-COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not in any form endorse this work. Different licenses apply:
-- COCO images: Flickr Terms of use
-- COCO annotations: Creative Commons Attribution 4.0 License
-- COCO-Stuff annotations & code: Creative Commons Attribution 4.0 License
-
-## References
+## Misc
+### References
 1. [COCO-Stuff: Thing and Stuff Classes in Context](arxiv) [TODO]<br />
 H. Caesar, J. Uijlings, V. Ferrari,<br />
 In *arXiv preprint arXiv:1506.xxx*, 2016.<br />
@@ -72,3 +73,12 @@ in *Computer Vision and Pattern Recognition* (CVPR), 2015.<br />
 4. [Semantic image segmentation with deep convolutional nets and fully connected CRFs](https://arxiv.org/abs/1412.7062)<br />
 L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy and A. L. Yuille,<br />
 In *International Conference on Learning Representations* (ICLR), 2015.<br />
+
+### Licensing
+COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not in any form endorse this work. Different licenses apply:
+- COCO images: Flickr Terms of use
+- COCO annotations: Creative Commons Attribution 4.0 License
+- COCO-Stuff annotations & code: Creative Commons Attribution 4.0 License
+
+### Contact
+If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
