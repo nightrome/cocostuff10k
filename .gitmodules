@@ -1,3 +1,6 @@
 [submodule "models/cocostuff-deeplab/deeplab-public-ver2"]
 	path = models/cocostuff-deeplab/deeplab-public-ver2
 	url = https://bitbucket.org/aquariusjay/deeplab-public-ver2
+[submodule "models/cocostuff-fcn/matconvnet-calvin"]
+	path = models/cocostuff-fcn/matconvnet-calvin
+	url = https://github.com/nightrome/matconvnet-calvin
