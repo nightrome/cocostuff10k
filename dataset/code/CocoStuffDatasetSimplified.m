@@ -25,10 +25,11 @@ classdef CocoStuffDatasetSimplified
         end
         
         function[image] = getImage(obj, imageName, ~)
+            % [image] = getImage(obj, imageName, ~)
             
             % Create path
-            imageFolder = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'data', 'input', 'images');
-            imagePath = fullfile(imageFolder, [imageName, obj.imageExt]);
+            imageFolderFull = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'data', 'input', 'images');
+            imagePath = fullfile(imageFolderFull, [imageName, obj.imageExt]);
             
             % Read in image and convert to double
             image = im2double(imread(imagePath));
