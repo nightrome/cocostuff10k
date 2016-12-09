@@ -27,9 +27,12 @@ To use the COCO-Stuff dataset, please follow these steps:
 
 1. Download or clone this repository using git: `git clone https://github.com/nightrome/cocostuff.git`
 2. Open the dataset folder in your shell: `cd cocostuff`
-3. Run the demo script in Matlab `dataset/code/demo_cocoStuff.m`
-4. This script will automatically download the [dataset files](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip). If you do not have Matlab, you will need to manually download and unpack the `annotations`, `images` and `imageLists` folders into the `dataset` folder.
-5. Display an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
+3. Download and unzip the dataset:
+  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip`
+  - `unzip downloads/cocostuff-data-v1.0.zip -d dataset/`
+4. Add the code folder to your Matlab path: `addpath('dataset/code');`
+5. Run the demo script in Matlab `demo_cocoStuff();`
+6. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
 
 ### File format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
@@ -59,16 +62,20 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
   - `cp Makefile.config.example Makefile.config`
   - `make`
   - `cd ../../..`
-3. (optional) Manually download and unzip [the model](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models/cocostuff-deeplab/cocostuff` folder. Choose this step if you don't want to train the model yourself.
+3. Download and unzip the model:
+  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip`
+  - `unzip downloads/cocostuff-deeplab.zip -d models/cocostuff-deeplab/cocostuff/`
 4. Configure the COCO-Stuff dataset:
-  - Create a symbolic link to the images: `ln -s 'dataset/images" "models/cocostuff-deeplab/cocostuff/data/images"`
-  - Convert the annotations by running `models/cocostuff-deeplab/code/convertAnnotations.m` in Matlab.
+  - Create a symbolic link to the images: `ln -s "../../../../dataset/images" "models/cocostuff-deeplab/cocostuff/data/images"`
+  - Add the code folder to your Matlab path: `addpath('models/cocostuff-deeplab/code');`
+  - Convert the annotations by running the Matlab script: `convertAnnotations();`
 5. Run `models/cocostuff-deeplab/run_cocostuff.sh` to train and test the network on COCO-Stuff.
 
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate superpixels with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
 We provide a basic version of our annotation tool:
-- To display the user interface, run `annotator/code/CocoStuffAnnotator.m` in Matlab.
+- Add the code folder to your Matlab path: `addpath('annotator/code');`
+- Run the user interface in Matlab: `CocoStuffAnnotator();`
 - The tool uses the images, regions and imageLists in `annotator/data/input`. The superpixel regions need to be provided by external tools and follow the format of the example files.
 - The tool writes the .mat label files to `annotator/data/output/annotations`.
 - To create a .png preview of the annotations, run `annotator/code/exportImages.m` in Matlab. The previews will be saved to `annotator/data/output/preview`.
