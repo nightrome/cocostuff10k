@@ -5,4 +5,4 @@ function[root] = cocoStuff_root()
 %
 % Copyright by Holger Caesar, 2016
 
-root = fileparts(fileparts(mfilename('fullpath')));
+root = fileparts(fileparts(fileparts(mfilename('fullpath'))));

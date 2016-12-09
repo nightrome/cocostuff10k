@@ -11,7 +11,7 @@
 downloadData();
 
 % Get images
-datasetFolder = cocoStuff_root();
+datasetFolder = fullfile(cocoStuff_root(), 'dataset');
 imageListPath = fullfile(datasetFolder, 'imageLists', 'all.txt');
 imageList = textread(imageListPath, '%s'); %#ok<DTXTRD>
 
