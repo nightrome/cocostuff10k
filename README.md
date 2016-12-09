@@ -57,7 +57,12 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
 3. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
 
 ## Annotation Tool
-In [1] we present very simple and highly efficient stuff annotation tool which was used for the COCO-Stuff dataset. It uses superpixels, existing pixel-level thing annotations
+In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate superpixels with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
+We provide a basic version of our annotation tool:
+- To display the user interface, run `annotator/code/CocoStuffAnnotator.m` in Matlab.
+- The tool uses the images, regions and imageLists in `annotator/data/input`. The superpixel regions need to be provided by external tools and follow the format of the example files.
+- The tool writes the .mat label files to `annotator/data/output/annotations`.
+- To create a .png preview of the annotations, run `annotator/code/exportImages.m` in Matlab. The previews will be saved to `annotator/data/output/preview`.
 
 ## Misc
 ### References
