@@ -1,26 +1,26 @@
 #!/bin/sh
 
 ## MODIFY PATH for YOUR SETTING
-ROOT_DIR=/home/holger/Docuuments/Features/Release/cocostuff/models/cocostuff-deeplab
+ROOT_DIR=.
 CAFFE_DIR=${ROOT_DIR}/deeplab-public-ver2
 CAFFE_BIN=${CAFFE_DIR}/.build_release/tools/caffe.bin
 EXP=cocostuff
-NUM_LABELS=172
-DATA_ROOT=${EXP}/data
- 
+EXP_DIR=${ROOT_DIR}/${EXP}
+NUM_LABELS=172 
 
 ## Specify which model to train
 ########### voc12 ################
 NET_ID=deeplabv2_vgg16
-DEV_ID=2
+DEV_ID=1
 
 #####
 
 ## Create dirs
-CONFIG_DIR=${EXP}/config/${NET_ID}
-MODEL_DIR=${EXP}/model/${NET_ID}
+CONFIG_DIR=${EXP_DIR}/config/${NET_ID}
+DATA_ROOT=${EXP_DIR}/data
+MODEL_DIR=${EXP_DIR}/model/${NET_ID}
 mkdir -p ${MODEL_DIR}
-LOG_DIR=${EXP}/log/${NET_ID}
+LOG_DIR=${EXP_DIR}/log/${NET_ID}
 mkdir -p ${LOG_DIR}
 export GLOG_log_dir=${LOG_DIR}
 
