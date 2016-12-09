@@ -47,14 +47,16 @@ Use the following steps to download and setup the FCN [3] semantic segmentation 
 
 1. Download matconvnet-calvin: `git submodule update --init models/cocostuff-fcn`
 2. Compile and configure FCN following the [author's instructions](https://github.com/nightrome/matconvnet-calvin).
-2. Download the model by running `models/cocostuff-fcn/install.m` in Matlab or manually download and unzip [cocostuff-fcn.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models` folder.
+3. (optional) Manually download and unzip [the model](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models` folder. Choose this step if you don't want to train the model yourself.
+4. TODO run...
 
 ### DeepLab
 Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
 
 1. Download deeplab-public-ver2: `git submodule update --init models/cocostuff-deeplab`
 2. Compile and configure DeepLab following the [author's instructions](https://bitbucket.org/aquariusjay/deeplab-public-ver2).
-3. Download the model by running `models/cocostuff-deeplab/install.m` in Matlab or manually download and unzip [cocostuff-deeplab.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder.
+3. (optional) Manually download and unzip [the model](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models` folder. Choose this step if you don't want to train the model yourself.
+4. Run `models/cocostuff-deeplab/run_cocostuff.sh` to train and test the network.
 
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate superpixels with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
