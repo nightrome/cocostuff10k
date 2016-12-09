@@ -82,6 +82,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Set timer
             obj.timerTotal = tic;
             
+            % Add general code folder to path
+            cocoStuffFolder = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+            addpath(fullfile(cocoStuffFolder, 'dataset', 'code'));
+            
             % Setup folders
             codeFolder = fileparts(mfilename('fullpath'));
             obj.dataFolder = fullfile(fileparts(codeFolder), 'data');

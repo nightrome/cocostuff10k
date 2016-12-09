@@ -6,8 +6,11 @@ function convertAnnotations()
 %
 % Copyrights by Holger Caesar, 2016
 
-% Settings
+% Add general code folder to path
 cocoStuffFolder = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
+addpath(fullfile(cocoStuffFolder, 'dataset', 'code'));
+
+% Settings
 annotationFolder = fullfile(cocoStuffFolder, 'dataset', 'annotations');
 saveFolder = fullfile(cocoStuffFolder, 'models', 'cocostuff-deeplab', 'deeplab-public-ver2', 'cocostuff', 'data', 'annotations');
 
