@@ -10,9 +10,10 @@ function downloadData()
 datasetFile = 'cocostuff-data-v1.0.zip';
 datasetBaseUrl = 'http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset';
 datasetUrl = fullfile(datasetBaseUrl, datasetFile);
-datasetFolder = cocoStuff_root();
-downloadFolder = fullfile(datasetFolder, 'downloads');
-datasetImageFolder = fullfile(datasetFolder, 'dataset', 'images');
+rootFolder = cocoStuff_root();
+datasetFolder = fullfile(rootFolder, 'dataset');
+downloadFolder = fullfile(rootFolder, 'downloads');
+datasetImageFolder = fullfile(datasetFolder, 'images');
 datasetFile = fullfile(downloadFolder, datasetFile);
 
 % Create download folder if it does not exist
