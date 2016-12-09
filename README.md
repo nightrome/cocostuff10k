@@ -27,9 +27,11 @@ To use the COCO-Stuff dataset, please follow these steps:
 
 1. Download or clone this repository using git: `git clone https://github.com/nightrome/cocostuff.git`
 2. Open the dataset folder in your shell: `cd cocostuff`
-3. Add the code folder to your Matlab path: `addpath('dataset/code');`
-4. Run the demo script in Matlab `demo_cocoStuff();`
-5. This script will automatically download the [dataset files](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip). If you do not have Matlab, you will need to manually download and unpack the `annotations`, `images` and `imageLists` folders into the `dataset` folder.
+3. Download and unzip the dataset:
+  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip`
+  - `unzip downloads/cocostuff-data-v1.0.zip -d dataset/`
+4. Add the code folder to your Matlab path: `addpath('dataset/code');`
+5. Run the demo script in Matlab `demo_cocoStuff();`
 6. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
 
 ### File format
@@ -60,9 +62,11 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
   - `cp Makefile.config.example Makefile.config`
   - `make`
   - `cd ../../..`
-3. (optional) Manually download and unzip [the model](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip) into the `models/cocostuff-deeplab/cocostuff` folder. Choose this step if you don't want to train the model yourself.
+3. Download and unzip the model:
+  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip`
+  - `unzip downloads/cocostuff-deeplab.zip -d models/cocostuff-deeplab/cocostuff/`
 4. Configure the COCO-Stuff dataset:
-  - Create a symbolic link to the images: `ln -s "dataset/images" "models/cocostuff-deeplab/cocostuff/data/images"`
+  - Create a symbolic link to the images: `ln -s "../../../../dataset/images" "models/cocostuff-deeplab/cocostuff/data/images"`
   - Add the code folder to your Matlab path: `addpath('models/cocostuff-deeplab/code');`
   - Convert the annotations by running the Matlab script: `convertAnnotations();`
 5. Run `models/cocostuff-deeplab/run_cocostuff.sh` to train and test the network on COCO-Stuff.
