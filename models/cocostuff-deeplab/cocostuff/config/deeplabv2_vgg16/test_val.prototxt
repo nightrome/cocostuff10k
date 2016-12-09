@@ -7,7 +7,7 @@
 # which makes it easier to exactly align responses at different layers.
 #
 
-name: "deeplabv2_vgg16"
+name: "${NET_ID}"
 
 layer {
   name: "data"
@@ -26,8 +26,8 @@ layer {
     mean_value: 122.675
   }
   image_data_param {
-    root_folder: "cocostuff/data"
-    source: "cocostuff/list/val.txt"
+    root_folder: "${DATA_ROOT}"
+    source: "${EXP}/list/${TEST_SET}.txt"
     batch_size: 1
     label_type: NONE
   }
@@ -373,12 +373,12 @@ layer {
   }
 }
 layer {
-  name: "fc8_cocostuff_1"
+  name: "fc8_${EXP}_1"
   type: "Convolution"
   bottom: "fc7_1"
-  top: "fc8_cocostuff_1"
+  top: "fc8_${EXP}_1"
   convolution_param {
-    num_output: 172
+    num_output: ${NUM_LABELS}
     kernel_size: 1
   }
 }
@@ -437,12 +437,12 @@ layer {
   }
 }
 layer {
-  name: "fc8_cocostuff_2"
+  name: "fc8_${EXP}_2"
   type: "Convolution"
   bottom: "fc7_2"
-  top: "fc8_cocostuff_2"
+  top: "fc8_${EXP}_2"
   convolution_param {
-    num_output: 172
+    num_output: ${NUM_LABELS}
     kernel_size: 1
   }
 }
@@ -501,12 +501,12 @@ layer {
   }
 }
 layer {
-  name: "fc8_cocostuff_3"
+  name: "fc8_${EXP}_3"
   type: "Convolution"
   bottom: "fc7_3"
-  top: "fc8_cocostuff_3"
+  top: "fc8_${EXP}_3"
   convolution_param {
-    num_output: 172
+    num_output: ${NUM_LABELS}
     kernel_size: 1
   }
 }
@@ -565,24 +565,24 @@ layer {
   }
 }
 layer {
-  name: "fc8_cocostuff_4"
+  name: "fc8_${EXP}_4"
   type: "Convolution"
   bottom: "fc7_4"
-  top: "fc8_cocostuff_4"
+  top: "fc8_${EXP}_4"
   convolution_param {
-    num_output: 172
+    num_output: ${NUM_LABELS}
     kernel_size: 1
   }
 }
 
 ### SUM the four branches
 layer {
-  bottom: "fc8_cocostuff_1"
-  bottom: "fc8_cocostuff_2"
-  bottom: "fc8_cocostuff_3"
-  bottom: "fc8_cocostuff_4"
-  top: "fc8_cocostuff"
-  name: "fc8_cocostuff"
+  bottom: "fc8_${EXP}_1"
+  bottom: "fc8_${EXP}_2"
+  bottom: "fc8_${EXP}_3"
+  bottom: "fc8_${EXP}_4"
+  top: "fc8_${EXP}"
+  name: "fc8_${EXP}"
   type: "Eltwise"
   eltwise_param {
     operation: SUM
@@ -592,7 +592,7 @@ layer {
 layer {
   name: "fc8_interp"
   type: "Interp"
-  bottom: "fc8_cocostuff"
+  bottom: "fc8_${EXP}"
   top: "fc8_interp"
   interp_param {
     zoom_factor: 8
@@ -616,8 +616,8 @@ layer {
     phase: TEST
   }
   mat_write_param {
-    prefix: "cocostuff/features/deeplabv2_vgg16/val/fc8/"
-    source: "cocostuff/list/val_id.txt"
+    prefix: "${FEATURE_DIR}/${TEST_SET}/fc8/"
+    source: "${EXP}/list/${TEST_SET}_id.txt"
     strip: 0
     period: 1
   }

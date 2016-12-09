@@ -1,4 +1,4 @@
-train_net: "${EXP}/config/deeplabv2_vgg16/train_train.prototxt"
+train_net: "${EXP}/config/${NET_ID}/train_${TRAIN_SET}.prototxt"
 
 lr_policy: "poly"
 power: 0.9
@@ -11,5 +11,5 @@ momentum: 0.9
 weight_decay: 0.0005
 
 snapshot: 10000
-snapshot_prefix: "${EXP}/model/deeplabv2_vgg16/train"
+snapshot_prefix: "${EXP}/model/${NET_ID}"
 solver_mode: GPU
