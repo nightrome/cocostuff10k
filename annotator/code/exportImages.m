@@ -5,10 +5,6 @@ function exportImages()
 %
 % Copyright by Holger Caesar, 2016
 
-% Add general code folder to path
-cocoStuffFolder = fileparts(fileparts(fileparts(mfilename('fullpath'))));
-addpath(fullfile(cocoStuffFolder, 'dataset', 'code'));
-
 % Settings
 datasetStuff = CocoStuffDatasetSimplified();
 exportAllUsers = false;

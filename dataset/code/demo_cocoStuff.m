@@ -7,9 +7,6 @@
 %
 % Copyright by Holger Caesar, 2016
 
-% Download the COCO-Stuff data (annotations, images, imageLists,)
-downloadData();
-
 % Get images
 datasetFolder = fullfile(cocoStuff_root(), 'dataset');
 imageListPath = fullfile(datasetFolder, 'imageLists', 'all.txt');

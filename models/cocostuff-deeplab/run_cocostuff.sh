@@ -1,18 +1,12 @@
 #!/bin/sh
 
 ## MODIFY PATH for YOUR SETTING
-ROOT_DIR=
-CAFFE_DIR=deeplab-public-ver2
+ROOT_DIR=/home/holger/Docuuments/Features/Release/cocostuff/models/cocostuff-deeplab
+CAFFE_DIR=${ROOT_DIR}/deeplab-public-ver2
 CAFFE_BIN=${CAFFE_DIR}/.build_release/tools/caffe.bin
 EXP=cocostuff
-
-if [ "${EXP}" = "cocostuff" ]; then
-    NUM_LABELS=172
-    DATA_ROOT=${EXP}/data
-else
-    NUM_LABELS=0
-    echo "Wrong exp name"
-fi
+NUM_LABELS=172
+DATA_ROOT=${EXP}/data
  
 
 ## Specify which model to train

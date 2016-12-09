@@ -6,25 +6,21 @@ function convertAnnotations()
 %
 % Copyrights by Holger Caesar, 2016
 
-% Add general code folder to path
-cocoStuffFolder = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
-addpath(fullfile(cocoStuffFolder, 'dataset', 'code'));
-
 % Settings
+cocoStuffFolder = cocoStuff_root();
 annotationFolder = fullfile(cocoStuffFolder, 'dataset', 'annotations');
 saveFolder = fullfile(cocoStuffFolder, 'models', 'cocostuff-deeplab', 'deeplab-public-ver2', 'cocostuff', 'data', 'annotations');
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% You do not need to change values below
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Get all images
 imgs_dir = dir(fullfile(annotationFolder, '*.mat'));
 
+% Create saveFolder if necessary
 if ~exist(saveFolder, 'dir')
     mkdir(saveFolder)
 end
 
 for i = 1 : numel(imgs_dir)
-    fprintf(1, 'processing %d (%d) ...\n', i, numel(imgs_dir));
+    fprintf(1, 'Processing image %d of %d ...\n', i, numel(imgs_dir));
     
     labelStruct = load(fullfile(annotationFolder, imgs_dir(i).name));
     labelMap = labelStruct.S;
