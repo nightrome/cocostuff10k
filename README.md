@@ -47,7 +47,7 @@ The COCO-Stuff annotations are stored in separate .mat files per image. These fi
 - *regionLabelsStuff:* A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
 
 ## Semantic Segmentation Models
-To encourage further research of stuff and things we provide trained semantic segmentation models for several state-of-the-art methods (see Sect. 4.4 in [1]).
+To encourage further research of stuff and things we provide the trained semantic segmentation model (see Sect. 4.4 in [1]).
 
 ### DeepLab
 Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
