@@ -6,7 +6,7 @@ function exportImages()
 % Copyright by Holger Caesar, 2016
 
 % Settings
-datasetStuff = CocoStuffDatasetSimplified();
+datasetStuff = CocoStuffAnnotatorDataset();
 exportAllUsers = false;
 dataFolder = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'data');
 imageFolder = fullfile(dataFolder, 'input', 'images');
