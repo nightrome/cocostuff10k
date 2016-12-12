@@ -49,8 +49,18 @@ To encourage further research of stuff and things we provide trained semantic se
 Use the following steps to download and setup the FCN [3] semantic segmentation model trained on COCO-Stuff. It requires [matconvnet-calvin](https://github.com/nightrome/matconvnet-calvin):
 
 1. Download matconvnet-calvin: `git submodule update --init models/matconvnet-calvin`
-2. Compile and configure matconvnet-calvin following the [author's instructions](https://github.com/nightrome/matconvnet-calvin).
-3. (optional) Manually download and unzip [the model](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models/cocostuff-fcn/TODO` folder. Choose this step if you don't want to train the model yourself.
+2. Compile and configure matconvnet-calvin following the [author's instructions](https://github.com/nightrome/matconvnet-calvin):
+  - `cd models/matconvnet-calvin`
+  - `git submodule update --init`
+  - Run the following Matlab commands:
+    - `cd matconvnet/matlab; vl_compilenn('EnableGpu', true); cd ../..;`
+    - `cd matconvnet-calvin/matlab; vl_compilenn_calvin(); cd ../..;`
+    - `setup();`
+  - `cd ../..`
+3. Download and unzip the model:
+  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip`
+  - `unzip downloads/cocostuff-fcn.zip -d models/matconvnet-calvin/`
+3. Manually download and unzip [the model](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-fcn.zip) into the `models/cocostuff-fcn/TODO` folder. Choose this step if you don't want to train the model yourself.
 4. TODO run...
 
 ### DeepLab
@@ -68,7 +78,7 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
 4. Configure the COCO-Stuff dataset:
   - Create a symbolic link to the images: `mkdir models/deeplab-public-ver2/cocostuff/data && ln -s ../../../../dataset/images models/deeplab-public-ver2/cocostuff/data/images`
   - Convert the annotations by running the Matlab script: `convertAnnotationsDeeplab();`
-5. Run `cd models/deeplab-public-ver2 && ./run_cocostuff.sh` to train and test the network on COCO-Stuff.
+5. Run `cd models/deeplab-public-ver2 && ./run_cocostuff.sh && cd ../..` to train and test the network on COCO-Stuff.
 
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate superpixels with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
