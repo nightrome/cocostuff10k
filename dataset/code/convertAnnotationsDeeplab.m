@@ -1,5 +1,5 @@
-function convertAnnotations()
-% convertAnnotations()
+function convertAnnotationsDeeplab()
+% convertAnnotationsDeeplab()
 %
 % Convert the COCO-Stuff annotation files into a suitable format for
 % DeepLab. Offsets the label indices by -1 and converts them to uint8.
@@ -9,7 +9,7 @@ function convertAnnotations()
 % Settings
 cocoStuffFolder = cocoStuff_root();
 annotationFolder = fullfile(cocoStuffFolder, 'dataset', 'annotations');
-saveFolder = fullfile(cocoStuffFolder, 'models', 'cocostuff-deeplab', 'deeplab-public-ver2', 'cocostuff', 'data', 'annotations');
+saveFolder = fullfile(cocoStuffFolder, 'models', 'deeplab-public-ver2', 'cocostuff', 'data', 'annotations');
 
 % Get all images
 imgs_dir = dir(fullfile(annotationFolder, '*.mat'));
