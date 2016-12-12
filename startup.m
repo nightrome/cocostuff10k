@@ -12,5 +12,4 @@ end
 
 % Add folders to path
 addpath('dataset/code');
-addpath('models/cocostuff-deeplab/code');
 addpath('annotator/code');
