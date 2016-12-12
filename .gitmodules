@@ -2,7 +2,3 @@
 	path = models/deeplab-public-ver2
 	url = https://bitbucket.org/aquariusjay/deeplab-public-ver2
 	ignore = untracked
-[submodule "models/matconvnet-calvin"]
-	path = models/matconvnet-calvin
-	url = https://github.com/nightrome/matconvnet-calvin
-	ignore = untracked
