@@ -21,6 +21,10 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - 5 captions per image from [2]
 
 ## Dataset
+Filename | Description | Size
+--- | --- | ---
+[cocostuff-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
+[cocostuff-readme.txt](https://raw.githubusercontent.com/nightrome/cocostuff/master/README.md) | This document | 6.5 KB
 
 ### Usage
 To use the COCO-Stuff dataset, please follow these steps:
