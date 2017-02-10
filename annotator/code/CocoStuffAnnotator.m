@@ -822,7 +822,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             if ~isempty(obj.timerImage)
                 timeImage = timeImage + toc(obj.timerImage);
             end
-            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v0.6 - %s - %s (%d / %d) - %.1fs', obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
+            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v0.7 - %s - %s (%d / %d) - %.1fs', obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
         end
         
         function figResize(obj, ~, ~)
