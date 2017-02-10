@@ -9,9 +9,9 @@ function[fileContent] = readLinesToCell(filePath, splitCols)
 % Copyright by Holger Caesar, 2014
 
 % Default arguments
-if ~exist('splitCols', 'var'),
+if ~exist('splitCols', 'var')
     splitCols = false;
-end;
+end
 rowDelim = '\n';
 colDelim = ' ';
 
@@ -30,10 +30,10 @@ fileContent = fileContent{1};
 fileContent = strtrim(fileContent);
 
 % Split further
-if splitCols,
+if splitCols
     % Split each line
     fileContent = cellfun(@(x) strsplit(x, colDelim), fileContent, 'UniformOutput', false);
     
     % Rearrange to correct width and height and convert to number
     fileContent = str2double(cat(1, fileContent{:}));
-end;
+end
