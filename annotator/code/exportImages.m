@@ -1,4 +1,5 @@
 function exportImages()
+% exportImages()
 %
 % Writes a viewable preview image for each annotation to
 % data/output/preview/<user>.
