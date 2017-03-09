@@ -108,7 +108,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             rng(42);
             
             % Get dataset options
-            stuffLabels = obj.datasetStuff.getLabelNamesStuff();
+            stuffLabels = CocoStuffClasses.getLabelNamesStuff();
             obj.labelNames = ['unprocessed'; 'unlabeled'; 'things'; 'thingsAdded'; stuffLabels];
             labelCount = numel(obj.labelNames);
             unprocessedColor = [1, 1, 1];
@@ -335,7 +335,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             end
             
             % Get label hierarchy
-            [nodes, cats, heights] = obj.datasetStuff.getClassHierarchyStuff();
+            [nodes, cats, heights] = CocoStuffClasses.getClassHierarchyStuff();
             
             % Plot label hierarchy
             obj.plotTree(nodes, cats, heights, 1);
