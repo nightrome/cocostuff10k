@@ -309,21 +309,21 @@ classdef CocoStuffClasses
             [nodes, categories, heights] = parentsToTrees(parents);
         end
         
-         function[nodes, categories, heights, parents] = getClassHierarchyStuffThings()
-             % [nodes, categories, heights, parents] = getClassHierarchyStuffThings()
-             
-             % Get stuff and thing subtrees
-              [~, ~, ~, parentsS] = CocoStuffClasses.getClassHierarchyStuff();
-              [~, ~, ~, parentsT] = CocoStuffClasses.getClassHierarchyThings();
-              
-              % Add root node which holds both subtrees
-              parentsS{1, 2} = 'root';
-              parentsT{1, 2} = 'root';
-              parents = [{'root', 'root'}; parentsT; parentsS];
-              
+        function[nodes, categories, heights, parents] = getClassHierarchyStuffThings()
+            % [nodes, categories, heights, parents] = getClassHierarchyStuffThings()
+            
+            % Get stuff and thing subtrees
+            [~, ~, ~, parentsS] = CocoStuffClasses.getClassHierarchyStuff();
+            [~, ~, ~, parentsT] = CocoStuffClasses.getClassHierarchyThings();
+            
+            % Add root node which holds both subtrees
+            parentsS{1, 2} = 'root';
+            parentsT{1, 2} = 'root';
+            parents = [{'root', 'root'}; parentsT; parentsS];
+            
             % Convert to tree
             [nodes, categories, heights] = parentsToTrees(parents);
-         end
+        end
         
         function[stuffLabels, thingLabels, stuffLabelInds, thingLabelInds] = getStuffThingLabels()
             % [stuffLabels, thingLabels, stuffLabelInds, thingLabelInds] = getStuffThingLabels()
@@ -425,69 +425,35 @@ classdef CocoStuffClasses
         function showClassHierarchyStuff()
             % showClassHierarchyStuff()
             
-            [nodes, cats, heights] = CocoStuffClasses.getClassHierarchyStuff();
-            CocoStuffClasses.plotTree(nodes, cats, heights)
+            [nodes, cats] = CocoStuffClasses.getClassHierarchyStuff();
+            plotTree(nodes, cats);
         end
         
         function showClassHierarchyThings()
             % showClassHierarchyThings()
             
-            [nodes, cats, heights] = CocoStuffClasses.getClassHierarchyThings();
-            CocoStuffClasses.plotTree(nodes, cats, heights)
+            [nodes, cats] = CocoStuffClasses.getClassHierarchyThings();
+            plotTree(nodes, cats);
         end
         
         function showClassHierarchyStuffThings()
             % showClassHierarchyStuffThings()
             
             [nodes, cats] = CocoStuffClasses.getClassHierarchyStuffThings();
-            CocoStuffClasses.plotTree(nodes, cats)
-        end
-        
-        function plotTree(nodes, cats, startTreeInd)
-            % plotTree(nodes, cats, heights, startTreeInd)
             
-            if ~exist('startTreeInd', 'var')
-                startTreeInd = 1;
-            end
-            
-            % Get only relevant nodes and cats
-            if startTreeInd ~= 1
-                % Find descendents of the specified startTreeInd node
-                sel = false(size(nodes));
-                sel(startTreeInd) = true;
-                while true
-                    oldSel = sel;
-                    sel = sel | ismember(nodes, find(sel));
-                    if isequal(sel, oldSel)
-                        break;
-                    end
-                end
-                nodes = nodes(sel);
-                cats = cats(sel);
-                
-                % Remap nodes in 0:x range
-                map = false(max(nodes), 1);
-                map(unique(nodes)) = true;
-                map = cumsum(map)-1;
-                nodes = map(nodes);
-            end
-            
-            % Plot them
+            % Start figure
             figLabelHierarchy = figure();
-            curAx = axes('Parent', figLabelHierarchy, 'Units', 'Norm');
-            axis(curAx, 'off');
-            treeplot(nodes');
-            [xs, ys] = treelayout(nodes);
             
-            % Set appearance settings and show labels
-            isLeaf = ys == min(ys);
-            textInner = text(xs(~isLeaf) + 0.01, ys(~isLeaf) - 0.025, cats(~isLeaf), 'VerticalAlignment', 'Bottom', 'HorizontalAlignment', 'right'); %#ok<NASGU>
-            textLeaf  = text(xs( isLeaf) - 0.01, ys( isLeaf) - 0.02,  cats( isLeaf), 'VerticalAlignment', 'Bottom', 'HorizontalAlignment', 'left'); %#ok<NASGU>
-            set(curAx, 'XTick', [], 'YTick', [], 'Units', 'Normalized');
-            curAx.XLabel.String = '';
+            % Plot label hierarchy
+            plotTree(nodes, cats, 1, figLabelHierarchy);
+            plotTree(nodes, cats, -1, figLabelHierarchy);
             
-            % Rotate view
-            camroll(90);
+            % Set figure size
+            pos = get(figLabelHierarchy, 'Position');
+            newPos = pos;
+            newPos(3) = 1000;
+            newPos(4) = 1000;
+            set(figLabelHierarchy, 'Position', newPos);
         end
     end
 end
