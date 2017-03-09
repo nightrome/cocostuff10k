@@ -34,6 +34,11 @@ if ~exist(slicoMexTarget, 'file')
     mex(params, slicoMexPath);
 end
 
+% Create output folder
+if ~exist(outputFolder, 'dir')
+    mkdir(outputFolder)
+end
+
 % Read username
 userNames = readLinesToCell(userPath);
 userName = userNames{1};
