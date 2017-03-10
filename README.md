@@ -88,7 +88,7 @@ We provide a basic version of our annotation tool:
 ### References
 - [1] [COCO-Stuff: Thing and Stuff Classes in Context](https://arxiv.org/abs/1612.03716)<br />
 H. Caesar, J. Uijlings, V. Ferrari,<br />
-In *arXiv preprint arXiv:1612.03716*, 2016.<br />
+In *arXiv preprint arXiv:1612.03716*, 2017.<br />
 
 - [2] [Microsoft COCO: Common Objects in Context](https://arxiv.org/abs/1405.0312)<br />
 T.-Y. Lin, M. Maire, S. Belongie et al.,<br />
