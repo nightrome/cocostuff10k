@@ -20,6 +20,12 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - Complex spatial context between stuff and things
 - 5 captions per image from [2]
 
+## Updates
+- 09 Mar 2017: Added label hierarchy scripts
+- 08 Mar 2017: Corrections to table 2 in arXiv paper [1]
+- 10 Feb 2017: Added tools extract SLICO superpixels in annotation tool
+- 12 Dec 2016: Dataset version 1.0 and arXiv paper [1] released 
+
 ## Dataset
 Filename | Description | Size
 --- | --- | ---
@@ -37,6 +43,10 @@ To use the COCO-Stuff dataset, please follow these steps:
 4. Add the code folder to your Matlab path: `startup();`
 5. Run the demo script in Matlab `demo_cocoStuff();`
 6. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
+
+### Label hierarchy
+The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `CocoStuffClasses.showClassHierarchyStuffThings()` (also available for just stuff and just thing classes) in Matlab. The output should look similar to the following figure:
+<img src="http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-labelhierarchy.png" alt="COCO-Stuff label hierarchy" width="100%">
 
 ### File format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
