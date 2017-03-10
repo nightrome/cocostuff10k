@@ -109,4 +109,4 @@ COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not 
 - COCO-Stuff annotations & code: [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/legalcode)
 
 ### Contact
-If you have any questions regarding this dataset, please contact us at holger.caesar-at-ed.ac.uk.
+If you have any questions regarding this dataset, please contact us at holger-at-it-caesar.com.
