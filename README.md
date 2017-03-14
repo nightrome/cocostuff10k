@@ -13,12 +13,12 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - [Misc](#misc)
 
 ## Highlights
-- 10,000 complex images from [2]
+- 10,000 complex images from COCO [2]
 - Dense pixel-level annotations
 - 80 thing and 91 stuff classes
-- Instance-level annotations for things from [2]
+- Instance-level annotations for things from COCO [2]
 - Complex spatial context between stuff and things
-- 5 captions per image from [2]
+- 5 captions per image from COCO [2]
 
 ## Updates
 - 09 Mar 2017: Added label hierarchy scripts
