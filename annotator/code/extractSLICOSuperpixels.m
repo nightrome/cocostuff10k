@@ -9,7 +9,7 @@ function extractSLICOSuperpixels()
 rootFolder = cocoStuff_root();
 dataFolder = fullfile(rootFolder, 'annotator', 'data');
 userPath = fullfile(dataFolder, 'input', 'user.txt');
-imageFolder = fullfile(dataFolder, 'input', 'images');
+imageFolder = fullfile(rootFolder, 'dataset', 'images');
 imageListFolder = fullfile(dataFolder, 'input', 'imageLists');
 regionTargetCount = 1000;
 slicoUrl = 'http://ivrl.epfl.ch/files/content/sites/ivrg/files/supplementary_material/RK_SLICsuperpixels/SLIC_mex.zip';

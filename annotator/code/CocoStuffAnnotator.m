@@ -50,7 +50,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         drawMode = 'superpixelDraw';
         drawOverwrite = false;
         drawSizes = [1, 2, 5, 10, 15, 20, 30, 50, 100]';
-        drawSize = 1;
+        drawSize = 10;
         drawColors
         drawColor
         drawNow = false;
@@ -58,20 +58,24 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         overlayTransparency = 0.2;
         timerTotal
         timerImage
+        timerImageDraw
+        timeImageDraw
         timeImagePrevious
+        timeImageDrawPrevious
         
         % Administrative
         imageList
         labelNames
         datasetStuff
         dataFolder
+        imageFolder
         regionFolder
         thingFolder
-        maskFolder
+        outputFolder
         userName
         
         % Image-specific
-        imageIdx
+        imageIdx = 1
         imageSize
         image
         imageName
@@ -82,23 +86,14 @@ classdef CocoStuffAnnotator < handle & dynamicprops
     
     methods
         % Constructor
-        function obj = CocoStuffAnnotator(varargin)
-            
-            % Initial settings
-            p = inputParser;
-            addParameter(p, 'datasetStuff', CocoStuffAnnotatorDataset());
-            addParameter(p, 'imageIdx', 1);
-            parse(p, varargin{:});
-            
-            % Set as global options
-            obj.datasetStuff = p.Results.datasetStuff;
-            obj.imageIdx = p.Results.imageIdx;
+        function obj = CocoStuffAnnotator()
             
             % Set timer
             obj.timerTotal = tic;
             
             % Setup folders
             obj.dataFolder = fullfile(cocoStuff_root(), 'annotator', 'data');
+            obj.imageFolder = fullfile(cocoStuff_root(), 'dataset', 'images');
             
             % Read user name
             userNamePath = fullfile(obj.dataFolder, 'input', 'user.txt');
@@ -109,7 +104,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Setup user folders
             obj.regionFolder  = fullfile(obj.dataFolder, 'input',  'regions', obj.regionName);
             obj.thingFolder  = fullfile(obj.dataFolder, 'input',  'things');
-            obj.maskFolder = fullfile(obj.dataFolder, 'output', 'annotations', obj.userName);
+            obj.outputFolder = fullfile(obj.dataFolder, 'output', 'annotations', obj.userName);
             
             % Get image list
             imageListPath = fullfile(obj.dataFolder, 'input', 'imageLists', sprintf('%s.list', obj.userName));
@@ -280,10 +275,12 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Set timer
             obj.timerImage = tic;
+            obj.timeImageDraw = 0;
+            obj.timerImageDraw = [];
             
             % Load image
             obj.imageName = obj.imageList{obj.imageIdx};
-            obj.image     = obj.datasetStuff.getImage(obj.imageName);
+            obj.image     = imread(fullfile(obj.imageFolder, [obj.imageName, '.jpg']));
             obj.imageSize = size(obj.image);
             
             % Load regions from file
@@ -318,23 +315,25 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             end
             
             % Load annotation if it already exists
-            maskPath = fullfile(obj.maskFolder, sprintf('mask-%s.mat', obj.imageName));
-            if exist(maskPath, 'file')
-                fprintf('Loading existing annotation mask %s...\n', maskPath);
-                maskStruct = load(maskPath, 'labelMap', 'timeImage', 'labelNames');
-                labelMap = maskStruct.labelMap;
-                obj.timeImagePrevious = maskStruct.timeImage;
+            outputPath = fullfile(obj.outputFolder, sprintf('%s.mat', obj.imageName));
+            if exist(outputPath, 'file')
+                fprintf('Loading existing annotation %s...\n', outputPath);
+                outputStruct = load(outputPath, 'labelMap', 'timeImage', 'timeImageDraw', 'labelNames');
+                labelMap = outputStruct.labelMap;
+                obj.timeImagePrevious = outputStruct.timeImage;
+                obj.timeImageDrawPrevious = outputStruct.timeImageDraw;
                 
                 % Make sure labels haven't changed since last time
-                savedLabelNames = maskStruct.labelNames;
+                savedLabelNames = outputStruct.labelNames;
                 assert(isequal(savedLabelNames, obj.labelNames));
                 
                 assert(obj.imageSize(1) == size(labelMap, 1) && obj.imageSize(2) == size(labelMap, 2) && size(labelMap, 3) == 1);
             else
-                fprintf('Creating new annotation mask %s...\n', maskPath);
+                fprintf('Creating new annotation %s...\n', outputPath);
                 labelMap = ones(obj.imageSize(1), obj.imageSize(2));
                 labelMap(labelMapThings) = obj.cls_things;
                 obj.timeImagePrevious = 0;
+                obj.timeImageDrawPrevious = 0;
             end
             assert(min(labelMap(:)) >= 1);
             
@@ -466,7 +465,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         function pickLabelInClick(obj, ~, event)
             % Find closest label indoors
             pos = [event.IntersectionPoint(2), event.IntersectionPoint(1)];
-            labelIdx = findClosestLabelInTree(pos, obj.ysLabelHierarchyIn, obj.xsLabelHierarchyIn, obj.categoriesLabelHierarchyIn); %#ok<PROPLC>
+            labelIdx = obj.findClosestLabelInTree(pos, obj.ysLabelHierarchyIn, obj.xsLabelHierarchyIn, obj.categoriesLabelHierarchyIn); %#ok<PROPLC>
             
             % Set globally
             obj.setLabelIdx(labelIdx); %#ok<PROPLC>
@@ -475,13 +474,13 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         function pickLabelOutClick(obj, ~, event)
             % Find closest label outdoors
             pos = [event.IntersectionPoint(2), event.IntersectionPoint(1)];
-            labelIdx = findClosestLabelInTree(pos, obj.ysLabelHierarchyOut, obj.xsLabelHierarchyOut, obj.categoriesLabelHierarchyOut); %#ok<PROPLC>
+            labelIdx = obj.findClosestLabelInTree(pos, obj.ysLabelHierarchyOut, obj.xsLabelHierarchyOut, obj.categoriesLabelHierarchyOut); %#ok<PROPLC>
             
             % Set globally
             obj.setLabelIdx(labelIdx); %#ok<PROPLC>
         end
         
-        function[labelIdx] = findClosestLabelInTree(pos, ys, xs, cats)
+        function[labelIdx] = findClosestLabelInTree(obj, pos, ys, xs, cats)
             dists = sqrt((ys - pos(1)) .^ 2 + (xs - pos(2)) .^ 2);
             [~, minDistInd] = min(dists);
             
@@ -535,22 +534,22 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.handleLabelMap.CData(obj.handleLabelMap.CData == oldLabelIdx) = newLabelIdx;
         end
         
-        function saveMask(obj)
+        function saveOutput(obj)
             % Check if anything was annotated
             labelMap = obj.handleLabelMap.CData;
-            maskPath = fullfile(obj.maskFolder, sprintf('mask-%s.mat', obj.imageName));
+            outputPath = fullfile(obj.outputFolder, sprintf('%s.mat', obj.imageName));
             if all(labelMap(:) == obj.cls_unprocessed)
-                fprintf('Not saving annotation for unedited image %s...\n', maskPath);
+                fprintf('Not saving annotation for unedited image %s...\n', outputPath);
                 return;
             end
             
             % Create folder
-            if ~exist(obj.maskFolder, 'dir')
-                mkdir(obj.maskFolder)
+            if ~exist(obj.outputFolder, 'dir')
+                mkdir(obj.outputFolder)
             end
             
-            % Save mask
-            fprintf('Saving annotation mask to %s...\n', maskPath);
+            % Save output
+            fprintf('Saving annotation output to %s...\n', outputPath);
             saveStruct.imageIdx = obj.imageIdx;
             saveStruct.imageSize = obj.imageSize;
             saveStruct.imageName = obj.imageName;
@@ -558,8 +557,9 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             saveStruct.labelNames = obj.labelNames;
             saveStruct.timeTotal = toc(obj.timerTotal);
             saveStruct.timeImage = obj.timeImagePrevious + toc(obj.timerImage);
+            saveStruct.timeImageDraw = obj.timeImageDraw;
             saveStruct.userName = obj.userName; %#ok<STRNU>
-            save(maskPath, '-struct', 'saveStruct', '-v7.3');
+            save(outputPath, '-struct', 'saveStruct', '-v7.3');
         end
         
         function buttonUndoClick(obj)
@@ -587,8 +587,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 end
             end
             
-            % Save current mask
-            obj.saveMask();
+            % Save current output
+            obj.saveOutput();
             
             % Set new imageIdx
             obj.imageIdx = obj.imageIdx - 1;
@@ -635,8 +635,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 return;
             end
             
-            % Save current mask
-            obj.saveMask();
+            % Save current output
+            obj.saveOutput();
             
             % Set new imageIdx
             obj.imageIdx = response;
@@ -657,8 +657,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 end
             end
             
-            % Save current mask
-            obj.saveMask();
+            % Save current output
+            obj.saveOutput();
             
             % Set new imageIdx
             obj.imageIdx = obj.imageIdx + 1;
@@ -781,13 +781,19 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                         % Find selected superpixel and create its mask
                         regionMapInds = sub2ind(size(obj.regionMap), selY, selX);
                         spInds = unique(obj.regionMap(regionMapInds));
-                        mask = ismember(obj.regionMap, spInds);
-                        [selY, selX] = find(mask);
+                        [selY, selX] = find(ismember(obj.regionMap, spInds));
                         inds = sub2ind(obj.imageSize(1:2), selY, selX);
                         indsIsOverwrite = (labelIdx == obj.cls_unprocessed | obj.drawOverwrite | obj.handleLabelMap.CData(inds) == obj.cls_unprocessed) ...
                             & obj.handleLabelMap.CData(inds) ~= obj.cls_things; %#ok<PROPLC>
                         obj.labelMapUndo = obj.handleLabelMap.CData;
                         obj.handleLabelMap.CData(inds(indsIsOverwrite)) = labelIdx; %#ok<PROPLC>
+                    end
+                    
+                    % Update drawing timer
+                    if isempty(obj.timerImageDraw)
+                        obj.timerImageDraw = tic;
+                    else
+                        obj.timeImageDraw = obj.timeImageDrawPrevious + toc(obj.timerImageDraw);
                     end
                     
                     % Update alpha data
@@ -815,12 +821,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         end
         
         function updateTitle(obj)
-            
-            timeImage = obj.timeImagePrevious;
-            if ~isempty(obj.timerImage)
-                timeImage = timeImage + toc(obj.timerImage);
-            end
-            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v%s - %s - %s (%d / %d) - %.1fs', obj.toolVersion, obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
+            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v%s - %s - %s (%d / %d) - %.1fs', obj.toolVersion, obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), obj.timeImageDraw));
         end
         
         function figResize(obj, ~, ~)
