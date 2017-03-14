@@ -1,15 +1,21 @@
 classdef CocoStuffAnnotator < handle & dynamicprops
     % COCO-Stuff image annotation class.
     %
-    % Supports superpixel drawing.
+    % This is the simplified version of the annotation tool used to
+    % annotate the COCO-Stuff dataset. It annotates superpixels with a
+    % paintbrush tool and clamps the known thing pixels from COCO.
+    %
+    % Requirements: For the two example images, take a look at
+    % data/input/.. to see the files with their regions and thing labels.
     % All point coordinates are [y, x]
-    % Input: 1-9 for labels, +- for scale, left/right click for add/remove
+    % Keyboard: 1-9 for labels, +- for scale, left/right click for add/remove
     %
     % Copyright by Holger Caesar, 2017
     
     properties
         % Settings
-        regionName = 'slico-1000'
+        regionName = 'slico-1000' % slico-1000 or pixels
+        toolVersion = '0.8'
         
         % Main figure
         figMain
@@ -31,14 +37,19 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         categoriesLabelHierarchyIn
         categoriesLabelHierarchyOut
         
+        % Class ids
+        cls_unprocessed
+        cls_unlabeled
+        cls_things
+        
         % Content fields
-        labelIdx = 2;
+        labelIdx
         drawStatus = 0; % 0: nothing, 1: left mouse, 2: right mouse
         drawMode = 'superpixelDraw';
         drawOverwrite = false;
         drawSizes = [1, 2, 5, 10, 15, 20, 30, 50, 100]';
         drawSize = 1;
-        drawColors % first is unlabeled
+        drawColors
         drawColor
         drawNow = false;
         labelMapTransparency = 0.6;
@@ -64,8 +75,6 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         imageName
         regionMap
         regionBoundaries
-        labelRegions
-        labelRegionsUndo
         labelMapUndo
     end
     
@@ -115,6 +124,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Get dataset options
             stuffLabels = CocoStuffClasses.getLabelNamesStuff();
             obj.labelNames = ['unprocessed'; 'unlabeled'; 'things'; stuffLabels];
+            obj.cls_unprocessed = find(strcmp(obj.labelNames, 'unprocessed'));
+            obj.cls_unlabeled = find(strcmp(obj.labelNames, 'unlabeled'));
+            obj.cls_things = find(strcmp(obj.labelNames, 'things'));
+            obj.labelIdx = obj.cls_unlabeled;
             labelCount = numel(obj.labelNames);
             unprocessedColor = [1, 1, 1];
             unlabeledColor = [0, 0, 0];
@@ -308,7 +321,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             else
                 fprintf('Creating new annotation mask %s...\n', maskPath);
                 labelMap = ones(obj.imageSize(1), obj.imageSize(2));
-                labelMap(labelMapThings) = 3;
+                labelMap(labelMapThings) = obj.cls_things;
                 obj.timeImagePrevious = 0;
             end
             assert(min(labelMap(:)) >= 1);
@@ -317,12 +330,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.handleImage.CData = obj.image;
             obj.handleLabelMap.CData = labelMap;
             
-            % Create labelRegions
-            obj.transferPixelToSuperpixelLabels();
-            
             % Set undo data
             obj.labelMapUndo = obj.handleLabelMap.CData;
-            obj.labelRegionsUndo = obj.labelRegions;
             
             % Update alpha data
             obj.updateAlphaData();
@@ -445,29 +454,27 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         function pickLabelInClick(obj, ~, event)
             % Find closest label indoors
             pos = [event.IntersectionPoint(2), event.IntersectionPoint(1)];
-            
-            dists = sqrt((obj.ysLabelHierarchyIn - pos(1)) .^ 2 + (obj.xsLabelHierarchyIn - pos(2)) .^ 2);
-            [~, minDistInd] = min(dists);
-            
-            labelName = obj.categoriesLabelHierarchyIn(minDistInd);
-            labelIdx = find(strcmp(obj.labelNames, labelName)); %#ok<PROPLC>
+            labelIdx = findClosestLabelInTree(pos, obj.ysLabelHierarchyIn, obj.xsLabelHierarchyIn, obj.categoriesLabelHierarchyIn); %#ok<PROPLC>
             
             % Set globally
-            obj.setLabelIdx(labelIdx); %#ok<PROPLC,FNDSB>
+            obj.setLabelIdx(labelIdx); %#ok<PROPLC>
         end
         
         function pickLabelOutClick(obj, ~, event)
-            % Find closest label indoors
+            % Find closest label outdoors
             pos = [event.IntersectionPoint(2), event.IntersectionPoint(1)];
-            
-            dists = sqrt((obj.ysLabelHierarchyOut - pos(1)) .^ 2 + (obj.xsLabelHierarchyOut - pos(2)) .^ 2);
-            [~, minDistInd] = min(dists);
-            
-            labelName = obj.categoriesLabelHierarchyOut(minDistInd);
-            labelIdx = find(strcmp(obj.labelNames, labelName)); %#ok<PROPLC>
+            labelIdx = findClosestLabelInTree(pos, obj.ysLabelHierarchyOut, obj.xsLabelHierarchyOut, obj.categoriesLabelHierarchyOut); %#ok<PROPLC>
             
             % Set globally
-            obj.setLabelIdx(labelIdx); %#ok<PROPLC,FNDSB>
+            obj.setLabelIdx(labelIdx); %#ok<PROPLC>
+        end
+        
+        function[labelIdx] = findClosestLabelInTree(pos, ys, xs, cats)
+            dists = sqrt((ys - pos(1)) .^ 2 + (xs - pos(2)) .^ 2);
+            [~, minDistInd] = min(dists);
+            
+            labelName = cats(minDistInd);
+            labelIdx = find(strcmp(obj.labelNames, labelName));
         end
         
         function buttonSuperpixelDrawClick(obj)
@@ -481,11 +488,9 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Save data for undo feature
             obj.labelMapUndo = obj.handleLabelMap.CData;
-            obj.labelRegionsUndo = obj.labelRegions;
             
             % Set all labels to 1 (unprocessed)
             obj.handleLabelMap.CData(obj.handleLabelMap.CData(:) == obj.labelIdx) = 1;
-            obj.labelRegions(obj.labelRegions(:) == obj.labelIdx) = 1;
             
             obj.updateAlphaData();
         end
@@ -513,18 +518,16 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Save labels for undo feature
             obj.labelMapUndo = obj.handleLabelMap.CData;
-            obj.labelRegionsUndo = obj.labelRegions;
             
             % Swap labels
             obj.handleLabelMap.CData(obj.handleLabelMap.CData == oldLabelIdx) = newLabelIdx;
-            obj.labelRegions(obj.labelRegions == oldLabelIdx) = newLabelIdx;
         end
         
         function saveMask(obj)
             % Check if anything was annotated
             labelMap = obj.handleLabelMap.CData;
             maskPath = fullfile(obj.maskFolder, sprintf('mask-%s.mat', obj.imageName));
-            if all(labelMap(:) == 1)
+            if all(labelMap(:) == obj.cls_unprocessed)
                 fprintf('Not saving annotation for unedited image %s...\n', maskPath);
                 return;
             end
@@ -547,42 +550,15 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             save(maskPath, '-struct', 'saveStruct', '-v7.3');
         end
         
-        function transferPixelToSuperpixelLabels(obj)
-            % Make sure that the labelRegions field contains all superpixels that are covered by just one class.
-            
-            % Save labels for undo feature
-            obj.labelRegionsUndo = obj.labelRegions;
-            
-            % Reset obj.labelRegions
-            regionCount = max(obj.regionMap(:));
-            obj.labelRegions = ones(regionCount, 1);
-            
-            labelMap = obj.handleLabelMap.CData;
-            relPixMap = labelMap ~= 1;
-            relSPs = unique(obj.regionMap(relPixMap));
-            for relSpIdx = 1 : numel(relSPs)
-                relSp = relSPs(relSpIdx);
-                sel = obj.regionMap == relSp;
-                selLabels = unique(labelMap(sel));
-                selLabels(selLabels == 1) = [];
-                if numel(selLabels) == 1
-                    obj.labelRegions(relSp) = selLabels;
-                end
-            end
-        end
-        
         function buttonUndoClick(obj)
             % Store undo info to redo
             tempMap = obj.handleLabelMap.CData;
-            tempRegions = obj.labelRegions;
             
             % Undo last drawing action (or clear label)
             obj.handleLabelMap.CData = obj.labelMapUndo;
-            obj.labelRegions = obj.labelRegionsUndo;
             
             % Save temp maps
             obj.labelMapUndo = tempMap;
-            obj.labelRegionsUndo = tempRegions;
             
             obj.updateAlphaData();
         end
@@ -755,8 +731,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                     
                     if labelIdx ~= 1 %#ok<PROPLC>
                         % Correct from read-only things to unlabeled
-                        if labelIdx == 3 %#ok<PROPLC>
-                            labelIdx = 2; %#ok<PROPLC>
+                        if labelIdx == obj.cls_things %#ok<PROPLC>
+                            labelIdx = obj.cls_unlabeled; %#ok<PROPLC>
                         end
                         
                         % Update labelIdx globally
@@ -769,7 +745,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                     if obj.drawStatus == 1
                         labelIdx = obj.labelIdx; %#ok<PROPLC>
                     elseif obj.drawStatus == 2
-                        labelIdx = 1; %#ok<PROPLC>
+                        labelIdx = obj.cls_unprocessed; %#ok<PROPLC>
                     end
                     
                     % Draw current circle on pixels or superpixels
@@ -796,14 +772,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                         mask = ismember(obj.regionMap, spInds);
                         [selY, selX] = find(mask);
                         inds = sub2ind(obj.imageSize(1:2), selY, selX);
-                        indsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.handleLabelMap.CData(inds) == 1) & obj.handleLabelMap.CData(inds) ~= 3; %#ok<PROPLC>
+                        indsIsOverwrite = (labelIdx == obj.cls_unprocessed | obj.drawOverwrite | obj.handleLabelMap.CData(inds) == obj.cls_unprocessed) ...
+                            & obj.handleLabelMap.CData(inds) ~= obj.cls_things; %#ok<PROPLC>
                         obj.labelMapUndo = obj.handleLabelMap.CData;
                         obj.handleLabelMap.CData(inds(indsIsOverwrite)) = labelIdx; %#ok<PROPLC>
-                        
-                        % Set superpixel labels
-                        spIndsIsOverwrite = (labelIdx == 1 | obj.drawOverwrite | obj.labelRegions(spInds) == 1) & obj.labelRegions(spInds) ~= 3; %#ok<PROPLC>
-                        obj.labelRegionsUndo = obj.labelRegions;
-                        obj.labelRegions(spInds(spIndsIsOverwrite)) = labelIdx; %#ok<PROPLC>
                     end
                     
                     % Update alpha data
@@ -813,7 +785,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         end
         
         function updateAlphaData(obj)
-            set(obj.handleLabelMap, 'AlphaData', obj.labelMapTransparency * double(obj.handleLabelMap.CData ~= 1));
+            set(obj.handleLabelMap, 'AlphaData', obj.labelMapTransparency * double(obj.handleLabelMap.CData ~= obj.cls_unprocessed));
             set(obj.handleOverlay, 'AlphaData', obj.overlayTransparency * obj.regionBoundaries);
         end
         
@@ -836,7 +808,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             if ~isempty(obj.timerImage)
                 timeImage = timeImage + toc(obj.timerImage);
             end
-            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v0.7 - %s - %s (%d / %d) - %.1fs', obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
+            set(obj.figMain, 'Name', sprintf('CocoStuffAnnotator v%s - %s - %s (%d / %d) - %.1fs', obj.toolVersion, obj.userName, obj.imageName, obj.imageIdx, numel(obj.imageList), timeImage));
         end
         
         function figResize(obj, ~, ~)
