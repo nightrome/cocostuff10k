@@ -1,5 +1,5 @@
-function extractSuperpixels()
-% extractSuperpixels()
+function extractSLICOSuperpixels()
+% extractSLICOSuperpixels()
 %
 % Extracts SLICO superpixels for each image in the imageList of the current user.
 %
