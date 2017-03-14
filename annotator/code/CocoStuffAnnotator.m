@@ -14,9 +14,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
     
     properties
         % Settings
-        regionName = 'slico-1000' % slico-1000 or pixels
+        regionName = 'slico-1000'
         toolVersion = '0.8'
-        showThings = true
+        useThings = true
+        useSuperpixels = false
         
         % Main figure
         figMain
@@ -287,22 +288,28 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.imageSize = size(obj.image);
             
             % Load regions from file
-            regionPath = fullfile(obj.regionFolder, sprintf('%s.mat', obj.imageName));
-            if exist(regionPath, 'file')
-                regionStruct = load(regionPath, 'regionMap', 'regionBoundaries');
-                obj.regionMap = regionStruct.regionMap;
-                obj.regionBoundaries = regionStruct.regionBoundaries;
+            if obj.useSuperpixels
+                regionPath = fullfile(obj.regionFolder, sprintf('%s.mat', obj.imageName));
+                if exist(regionPath, 'file')
+                    regionStruct = load(regionPath, 'regionMap', 'regionBoundaries');
+                    obj.regionMap = regionStruct.regionMap;
+                    obj.regionBoundaries = regionStruct.regionBoundaries;
+                else
+                    error('Error: Cannot find region file: %s\n', regionPath);
+                end
             else
-                error('Error: Cannot find region file: %s\n', regionPath);
+                pixelCount = obj.imageSize(1) * obj.imageSize(2);
+                obj.regionMap = reshape(1:pixelCount, obj.imageSize(1), obj.imageSize(2));
+                obj.regionBoundaries = false(obj.imageSize(1:2));
             end
             
             % Load things from file if specified
             thingPath = fullfile(obj.thingFolder, sprintf('%s.mat', obj.imageName));
-            if obj.showThings && exist(thingPath, 'file')
+            if obj.useThings && exist(thingPath, 'file')
                 % Load things
                 thingStruct = load(thingPath, 'labelMapThings');
                 labelMapThings = thingStruct.labelMapThings;
-            elseif obj.showThings
+            elseif obj.useThings
                 % Load dummy things and print warning
                 labelMapThings = false(size(obj.regionMap));
                 fprintf('Warning: Cannot find things file: %s\n', thingPath);
