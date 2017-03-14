@@ -5,9 +5,12 @@ classdef CocoStuffAnnotator < handle & dynamicprops
     % All point coordinates are [y, x]
     % Input: 1-9 for labels, +- for scale, left/right click for add/remove
     %
-    % Copyright by Holger Caesar, 2016
+    % Copyright by Holger Caesar, 2017
     
     properties
+        % Settings
+        regionName = 'slico-1000'
+        
         % Main figure
         figMain
         containerButtons
@@ -50,6 +53,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         datasetStuff
         dataFolder
         regionFolder
+        thingFolder
         maskFolder
         userName
         
@@ -93,7 +97,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.userName = userName{1};
             
             % Setup user folders
-            obj.regionFolder  = fullfile(obj.dataFolder, 'input',  'regions', 'slico-1000');
+            obj.regionFolder  = fullfile(obj.dataFolder, 'input',  'regions', obj.regionName);
+            obj.thingFolder  = fullfile(obj.dataFolder, 'input',  'things');
             obj.maskFolder = fullfile(obj.dataFolder, 'output', 'annotations', obj.userName);
             
             % Get image list
@@ -109,7 +114,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Get dataset options
             stuffLabels = CocoStuffClasses.getLabelNamesStuff();
-            obj.labelNames = ['unprocessed'; 'unlabeled'; 'things'; 'thingsAdded'; stuffLabels];
+            obj.labelNames = ['unprocessed'; 'unlabeled'; 'things'; stuffLabels];
             labelCount = numel(obj.labelNames);
             unprocessedColor = [1, 1, 1];
             unlabeledColor = [0, 0, 0];
@@ -117,7 +122,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             thingColor = otherColors(1, :);
             stuffColors = otherColors(2:end, :);
             stuffColors = stuffColors(randperm(size(stuffColors, 1)), :);
-            obj.drawColors = [unprocessedColor; unlabeledColor; thingColor; thingColor; stuffColors];
+            obj.drawColors = [unprocessedColor; unlabeledColor; thingColor; stuffColors];
             obj.drawColor = obj.drawColors(obj.labelIdx, :);
             assert(size(obj.drawColors, 1) == labelCount);
             
@@ -270,12 +275,21 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Load regions from file
             regionPath = fullfile(obj.regionFolder, sprintf('%s.mat', obj.imageName));
             if exist(regionPath, 'file')
-                regionStruct = load(regionPath, 'regionMap', 'regionBoundaries', 'labelMapThings');
+                regionStruct = load(regionPath, 'regionMap', 'regionBoundaries');
                 obj.regionMap = regionStruct.regionMap;
                 obj.regionBoundaries = regionStruct.regionBoundaries;
-                labelMapThings = regionStruct.labelMapThings;
             else
                 error('Error: Cannot find region file: %s\n', regionPath);
+            end
+            
+            % Load things from file
+            thingPath = fullfile(obj.thingFolder, sprintf('%s.mat', obj.imageName));
+            if exist(thingPath, 'file')
+                thingStruct = load(thingPath, 'labelMapThings');
+                labelMapThings = thingStruct.labelMapThings;
+            else
+                labelMapThings = false(size(obj.regionMap));
+                fprintf('Warning: Cannot find things file: %s\n', thingPath);
             end
             
             % Load annotation if it already exists
@@ -294,7 +308,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             else
                 fprintf('Creating new annotation mask %s...\n', maskPath);
                 labelMap = ones(obj.imageSize(1), obj.imageSize(2));
-                labelMap(labelMapThings == 3) = 3;
+                labelMap(labelMapThings) = 3;
                 obj.timeImagePrevious = 0;
             end
             assert(min(labelMap(:)) >= 1);
@@ -740,9 +754,9 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                     labelIdx = obj.handleLabelMap.CData(pos(1), pos(2)); %#ok<PROPLC>
                     
                     if labelIdx ~= 1 %#ok<PROPLC>
-                        % Correct from read-only things to addable things
+                        % Correct from read-only things to unlabeled
                         if labelIdx == 3 %#ok<PROPLC>
-                            labelIdx = 4; %#ok<PROPLC>
+                            labelIdx = 2; %#ok<PROPLC>
                         end
                         
                         % Update labelIdx globally
@@ -811,7 +825,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             imPoint = [imPoint(1, 2), imPoint(1, 1)];
             
             if 1 <= imPoint(1) && imPoint(1) <= obj.imageSize(1) && ...
-                    1 <= imPoint(2) && imPoint(2) <= obj.imageSize(2)
+               1 <= imPoint(2) && imPoint(2) <= obj.imageSize(2)
                 obj.drawPos(imPoint);
             end
         end

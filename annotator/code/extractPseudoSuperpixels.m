@@ -4,8 +4,6 @@ function extractPseudoSuperpixels()
 % Extracts pseudo superpixels for each image in the imageList of the current user.
 % Pseudo superpixels are actually single pixels, but stored in the same
 % format as superpixels.
-% This script does not include the known thing classes from COCO and
-% therefore the field labelMapThings is set to dummy values.
 %
 % Copyright by Holger Caesar, 2017
 
@@ -38,19 +36,15 @@ for imageIdx = 1 : imageCount
     image = imread(imagePath);
     imageSize = [size(image, 1), size(image, 2)];
     regionMap = getRegionsPseudo(image);
-    labelMapThings = ones(imageSize);
     regionBoundaries = false(size(regionMap));
     
     % Some checks
-    assert(all(imageSize == size(labelMapThings)));
     assert(all(imageSize == size(regionBoundaries)));
     assert(all(imageSize == size(regionMap)));
-    assert(isa(labelMapThings, 'double'));
     assert(isa(regionBoundaries, 'logical'));
     assert(isa(regionMap, 'double'));
     
     % Save to file
-    regionStruct.labelMapThings = labelMapThings;
     regionStruct.regionBoundaries = regionBoundaries;
     regionStruct.regionMap = regionMap;
     outputPath = fullfile(outputFolder, [imageName, '.mat']);

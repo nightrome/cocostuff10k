@@ -2,8 +2,6 @@ function extractSuperpixels()
 % extractSuperpixels()
 %
 % Extracts SLICO superpixels for each image in the imageList of the current user.
-% This script does not include the known thing classes from COCO and
-% therefore the field labelMapThings is set to dummy values.
 %
 % Copyright by Holger Caesar, 2017
 
@@ -20,7 +18,7 @@ slicoTargetFolder = fullfile(rootFolder, 'downloads', 'SLIC_mex');
 slicoTargetSubFolder = fullfile(slicoTargetFolder, 'SLIC_mex');
 slicoMexPath = fullfile(slicoTargetSubFolder, 'slicomex.c');
 slicoMexTarget = fullfile(rootFolder, 'slicomex.mexa64');
-outputFolder = fullfile(dataFolder, 'input', 'regions', sprintf('slico-%d', regionTargetCount));
+regionFolder = fullfile(dataFolder, 'input', 'regions', sprintf('slico-%d', regionTargetCount));
 
 % Install SLICO
 if ~exist(slicoDownloadPath, 'file')
@@ -35,8 +33,8 @@ if ~exist(slicoMexTarget, 'file')
 end
 
 % Create output folder
-if ~exist(outputFolder, 'dir')
-    mkdir(outputFolder)
+if ~exist(regionFolder, 'dir')
+    mkdir(regionFolder)
 end
 
 % Read username
@@ -55,22 +53,18 @@ for imageIdx = 1 : imageCount
     image = imread(imagePath);
     imageSize = [size(image, 1), size(image, 2)];
     regionMap = getRegionsSLICO(image, regionTargetCount);
-    labelMapThings = ones(imageSize);
     regionBoundaries = getRegionBoundaries(regionMap);
     
     % Some checks
-    assert(all(imageSize == size(labelMapThings)));
     assert(all(imageSize == size(regionBoundaries)));
     assert(all(imageSize == size(regionMap)));
-    assert(isa(labelMapThings, 'double'));
     assert(isa(regionBoundaries, 'logical'));
     assert(isa(regionMap, 'double'));
     
     % Save to file
-    regionStruct.labelMapThings = labelMapThings;
     regionStruct.regionBoundaries = regionBoundaries;
     regionStruct.regionMap = regionMap;
-    outputPath = fullfile(outputFolder, [imageName, '.mat']);
+    outputPath = fullfile(regionFolder, [imageName, '.mat']);
     save(outputPath, '-struct', 'regionStruct');
 end
 
