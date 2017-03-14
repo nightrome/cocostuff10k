@@ -98,8 +98,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.timerTotal = tic;
             
             % Setup folders
-            codeFolder = fileparts(mfilename('fullpath'));
-            obj.dataFolder = fullfile(fileparts(codeFolder), 'data');
+            obj.dataFolder = fullfile(cocoStuff_root(), 'annotator', 'data');
             
             % Read user name
             userNamePath = fullfile(obj.dataFolder, 'input', 'user.txt');

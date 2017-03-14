@@ -26,7 +26,7 @@ classdef CocoStuffAnnotatorDataset
             % [image] = getImage(obj, imageName, ~)
             
             % Create path
-            imageFolderFull = fullfile(cocoStuff_root(), 'annotator', 'data', 'input', 'images');
+            imageFolderFull = fullfile(cocoStuff_root(), 'dataset', 'images');
             imagePath = fullfile(imageFolderFull, [imageName, obj.imageExt]);
             
             % Read in image and convert to double
