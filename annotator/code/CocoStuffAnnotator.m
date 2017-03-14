@@ -16,6 +16,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         % Settings
         regionName = 'slico-1000' % slico-1000 or pixels
         toolVersion = '0.8'
+        showThings = true
         
         % Main figure
         figMain
@@ -295,14 +296,19 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 error('Error: Cannot find region file: %s\n', regionPath);
             end
             
-            % Load things from file
+            % Load things from file if specified
             thingPath = fullfile(obj.thingFolder, sprintf('%s.mat', obj.imageName));
-            if exist(thingPath, 'file')
+            if obj.showThings && exist(thingPath, 'file')
+                % Load things
                 thingStruct = load(thingPath, 'labelMapThings');
                 labelMapThings = thingStruct.labelMapThings;
-            else
+            elseif obj.showThings
+                % Load dummy things and print warning
                 labelMapThings = false(size(obj.regionMap));
                 fprintf('Warning: Cannot find things file: %s\n', thingPath);
+            else
+                % Load dummy things and ignore
+                labelMapThings = false(size(obj.regionMap));
             end
             
             % Load annotation if it already exists
