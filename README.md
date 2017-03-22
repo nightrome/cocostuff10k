@@ -79,10 +79,14 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate SLICO superpixels (precomputed using the [code](http://ivrl.epfl.ch/files/content/sites/ivrg/files/supplementary_material/RK_SLICsuperpixels/SLIC_mex.zip) of [Achanta et al.](http://ivrl.epfl.ch/research/superpixels)) with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
 We provide a basic version of our annotation tool:
-- Run the user interface in Matlab: `CocoStuffAnnotator();`
-- The tool uses the images, regions and imageLists in `annotator/data/input`. The superpixel regions need to be provided by external tools and follow the format of the example files.
-- The tool writes the .mat label files to `annotator/data/output/annotations`.
-- To create a .png preview of the annotations, run `annotator/code/exportImages.m` in Matlab. The previews will be saved to `annotator/data/output/preview`.
+- Prepare the required data:
+  - Specify a username in `annotator/data/input/user.txt`.
+  - Create a list of images in `annotator/data/input/imageLists/<user>.list`.
+  - Extract the thing annotations for all images in Matlab: `extractThings()`.
+  - Extract the superpixels for all images in Matlab: `extractSLICOSuperpixels()`.
+- Run the annotation tool in Matlab: `CocoStuffAnnotator();`
+  - The tool writes the .mat label files to `annotator/data/output/annotations`.
+  - To create a .png preview of the annotations, run `annotator/code/exportImages.m` in Matlab. The previews will be saved to `annotator/data/output/preview`.
 
 ## Misc
 ### References
