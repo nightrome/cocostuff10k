@@ -17,7 +17,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         regionName = 'slico-1000'
         toolVersion = '0.8'
         useThings = true
-        useSuperpixels = false
+        useSuperpixels = true
         
         % Main figure
         figMain
@@ -56,12 +56,6 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         drawNow = false;
         labelMapTransparency = 0.6;
         overlayTransparency = 0.2;
-        timerTotal
-        timerImage
-        timerImageDraw
-        timeImageDraw
-        timeImagePrevious
-        timeImageDrawPrevious
         
         % Administrative
         imageList
@@ -82,6 +76,16 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         regionMap
         regionBoundaries
         labelMapUndo
+        drawSizeMap
+        timeMap
+        timeDiffMap
+        timerTotal
+        timerImage
+        timerImageDraw
+        timeImageDraw
+        timeImagePrevious
+        timeImageDrawPrevious
+        lastDrawTime
     end
     
     methods
@@ -318,10 +322,22 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             outputPath = fullfile(obj.outputFolder, sprintf('%s.mat', obj.imageName));
             if exist(outputPath, 'file')
                 fprintf('Loading existing annotation %s...\n', outputPath);
-                outputStruct = load(outputPath, 'labelMap', 'timeImage', 'timeImageDraw', 'labelNames');
+                outputStruct = load(outputPath, 'labelMap', 'timeImage', 'timeImageDraw', 'timeMap', 'timeDiffMap', 'drawSizeMap', 'labelNames');
                 labelMap = outputStruct.labelMap;
                 obj.timeImagePrevious = outputStruct.timeImage;
                 obj.timeImageDrawPrevious = outputStruct.timeImageDraw;
+                
+                % For compatibility
+                if isfield(outputStruct, 'timeMap')
+                    obj.timeMap = outputStruct.timeMap;
+                end
+                if isfield(outputStruct, 'timeDiffMap')
+                    obj.timeDiffMap = outputStruct.timeDiffMap;
+                end
+                if isfield(outputStruct, 'drawSizeMap')
+                    obj.drawSizeMap = outputStruct.drawSizeMap;
+                end
+                obj.lastDrawTime = [];
                 
                 % Make sure labels haven't changed since last time
                 savedLabelNames = outputStruct.labelNames;
@@ -334,6 +350,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 labelMap(labelMapThings) = obj.cls_things;
                 obj.timeImagePrevious = 0;
                 obj.timeImageDrawPrevious = 0;
+                obj.timeMap = nan(obj.imageSize(1:2));
+                obj.timeDiffMap = nan(obj.imageSize(1:2));
+                obj.drawSizeMap = nan(obj.imageSize(1:2));
+                obj.lastDrawTime = [];
             end
             assert(min(labelMap(:)) >= 1);
             
@@ -558,7 +578,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             saveStruct.timeTotal = toc(obj.timerTotal);
             saveStruct.timeImage = obj.timeImagePrevious + toc(obj.timerImage);
             saveStruct.timeImageDraw = obj.timeImageDraw;
-            saveStruct.userName = obj.userName; %#ok<STRNU>
+            saveStruct.timeMap = obj.timeMap;
+            saveStruct.timeDiffMap = obj.timeDiffMap;
+            saveStruct.drawSizeMap = obj.drawSizeMap;
+            saveStruct.userName = obj.userName;
             save(outputPath, '-struct', 'saveStruct', '-v7.3');
         end
         
@@ -785,9 +808,19 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                         inds = sub2ind(obj.imageSize(1:2), selY, selX);
                         indsIsOverwrite = (labelIdx == obj.cls_unprocessed | obj.drawOverwrite | obj.handleLabelMap.CData(inds) == obj.cls_unprocessed) ...
                             & obj.handleLabelMap.CData(inds) ~= obj.cls_things; %#ok<PROPLC>
+                        inds = inds(indsIsOverwrite);
                         obj.labelMapUndo = obj.handleLabelMap.CData;
-                        obj.handleLabelMap.CData(inds(indsIsOverwrite)) = labelIdx; %#ok<PROPLC>
+                        obj.handleLabelMap.CData(inds) = labelIdx; %#ok<PROPLC>
                     end
+                    
+                    % Update history of when which pixels was changed
+                    curDrawTime = obj.timeImagePrevious + toc(obj.timerImage);
+                    obj.timeMap(inds) = curDrawTime;
+                    if ~isempty(obj.lastDrawTime)
+                        obj.timeDiffMap(inds) = curDrawTime - obj.lastDrawTime;
+                    end
+                    obj.drawSizeMap(inds) = obj.drawSize;
+                    obj.lastDrawTime = curDrawTime;
                     
                     % Update drawing timer
                     if isempty(obj.timerImageDraw)

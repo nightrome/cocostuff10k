@@ -7,10 +7,9 @@ function exportImages()
 % Copyright by Holger Caesar, 2016
 
 % Settings
-datasetStuff = CocoStuffAnnotatorDataset();
 exportAllUsers = false;
-dataFolder = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'data');
-imageFolder = fullfile(dataFolder, 'input', 'images');
+dataFolder = fullfile(cocoStuff_root(), 'annotator', 'data');
+imageFolder = fullfile(cocoStuff_root(), 'dataset', 'images');
 annotationTopFolder = fullfile(dataFolder, 'output', 'annotations');
 previewTopFolder = fullfile(dataFolder, 'output', 'preview');
 
@@ -44,14 +43,12 @@ for userIdx = 1 : userCount
     
     % Create colorMap
     rng(42);
-    stuffCount = numel(datasetStuff.getLabelNames());
     unprocessedColor = [1, 1, 1];
     unlabeledColor = [0, 0, 0];
-    otherColors = jet(stuffCount+1);
-    thingColor = otherColors(1, :);
-    stuffColors = otherColors(2:end, :);
-    stuffColors = stuffColors(randperm(stuffCount), :);
-    colorMap = [unprocessedColor; unlabeledColor; thingColor; thingColor; stuffColors];
+    thingColor = jet(1);
+    stuffColors = cmapStuff();
+    stuffColors = stuffColors(2:end, :);
+    colorMap = [unprocessedColor; unlabeledColor; thingColor; stuffColors];
     
     imageCount = numel(fileList);
     for imageIdx = 1 : imageCount
@@ -62,9 +59,6 @@ for userIdx = 1 : userCount
         imageName = strrep(fileName, '.mat', '');
         imageName = strrep(imageName, 'mask-', '');
         outPath = fullfile(previewFolder, [imageName, '.png']);
-        if exist(outPath, 'file')
-            continue;
-        end
         
         % Get image and labelMap
         imagePath = fullfile(imageFolder, [imageName, '.jpg']);
