@@ -15,9 +15,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
     properties
         % Settings
         regionName = 'slico-1000'
-        toolVersion = '0.8'
-        useThings = true
-        useSuperpixels = true
+        toolVersion = '0.9'
+        useThings = true;
+        useSuperpixels = true;
+        usePolygons = false;
         
         % Main figure
         figMain
@@ -28,7 +29,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         ui
         handleImage
         handleLabelMap
-        handleOverlay
+        handleBoundary
+        handlePolygon
         
         % Pick label specific
         figLabelHierarchy
@@ -46,7 +48,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         
         % Content fields
         labelIdx
-        drawStatus = 0; % 0: nothing, 1: left mouse, 2: right mouse
+        drawStatus = 0; % 0: nothing, 1: left click, 2: right click, 3: middle click
+        drawModeDefault = 'superpixelDraw';
         drawMode = 'superpixelDraw';
         drawOverwrite = false;
         drawSizes = [1, 2, 5, 10, 15, 20, 30, 50, 100]';
@@ -55,7 +58,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         drawColor
         drawNow = false;
         labelMapTransparency = 0.6;
-        overlayTransparency = 0.2;
+        boundaryTransparency = 0.2;
         
         % Administrative
         imageList
@@ -86,6 +89,9 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         timeImagePrevious
         timeImageDrawPrevious
         lastDrawTime
+        
+        % Polygon-specific
+        curPolygon
     end
     
     methods
@@ -226,10 +232,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 'Min', 0, 'Max', 100, 'Value', 100 * obj.labelMapTransparency, ...
                 'Callback', @(handle, event) sliderMapTransparencyChange(obj, handle, event));
             
-            obj.ui.sliderOverlayTransparency = uicontrol(obj.containerOptions, ...
+            obj.ui.sliderBoundaryTransparency = uicontrol(obj.containerOptions, ...
                 'Style', 'slider', ...
-                'Min', 0, 'Max', 100, 'Value', 100 * obj.overlayTransparency, ...
-                'Callback', @(handle, event) sliderOverlayTransparencyChange(obj, handle, event));
+                'Min', 0, 'Max', 100, 'Value', 100 * obj.boundaryTransparency, ...
+                'Callback', @(handle, event) sliderBoundaryTransparencyChange(obj, handle, event));
             
             % Make sure labelIdx is the same everywhere
             obj.setLabelIdx(obj.labelIdx);
@@ -246,7 +252,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             % Initialize handles with empty images
             obj.handleImage = imshow([]);
             obj.handleLabelMap = image([]);
-            obj.handleOverlay = image([]);
+            obj.handleBoundary = image([]);
+            obj.handlePolygon = image([]);
             hold off;
             
             % Specify the colors for each label in the labelMap
@@ -257,7 +264,8 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Image event callbacks
             set(obj.handleLabelMap, 'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
-            set(obj.handleOverlay, 'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
+            set(obj.handleBoundary, 'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
+            set(obj.handlePolygon,  'ButtonDownFcn', @(handle, event) handleClickDown(obj, handle, event));
             
             % Figure event callbacks
             set(obj.figMain, 'WindowButtonMotionFcn', @(handle, event) figMouseMove(obj, handle, event));
@@ -268,6 +276,12 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             
             % Set fancy mouse pointer
             setCirclePointer(obj.figMain);
+            
+            % Set drawMode
+            if obj.usePolygons
+                obj.drawModeDefault = 'polygonDraw';
+                obj.drawMode = 'polygonDraw';
+            end
             
             % Load image
             obj.loadImage();
@@ -346,7 +360,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 assert(obj.imageSize(1) == size(labelMap, 1) && obj.imageSize(2) == size(labelMap, 2) && size(labelMap, 3) == 1);
             else
                 fprintf('Creating new annotation %s...\n', outputPath);
-                labelMap = ones(obj.imageSize(1), obj.imageSize(2));
+                labelMap = repmat(obj.cls_unprocessed, [obj.imageSize(1), obj.imageSize(2)]);
                 labelMap(labelMapThings) = obj.cls_things;
                 obj.timeImagePrevious = 0;
                 obj.timeImageDrawPrevious = 0;
@@ -358,19 +372,20 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             assert(min(labelMap(:)) >= 1);
             
             % Show images
+            boundaryIm = zeros(obj.imageSize);
+            boundaryIm(:, :, 1) = 1;
+            polygonIm = repmat(obj.cls_unprocessed, obj.imageSize(1:2));
+            
             obj.handleImage.CData = obj.image;
             obj.handleLabelMap.CData = labelMap;
+            obj.handlePolygon.CData = polygonIm;
+            obj.handleBoundary.CData = boundaryIm;
             
             % Set undo data
             obj.labelMapUndo = obj.handleLabelMap.CData;
             
             % Update alpha data
             obj.updateAlphaData();
-            
-            % Show boundaries
-            overlayIm = zeros(obj.imageSize);
-            overlayIm(:, :, 1) = 1;
-            obj.handleOverlay.CData = overlayIm;
             
             % Update figure title
             obj.updateTitle();
@@ -735,18 +750,21 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             obj.updateAlphaData();
         end
         
-        function sliderOverlayTransparencyChange(obj, ~, event)
-            obj.overlayTransparency = event.Source.Value / 100;
+        function sliderBoundaryTransparencyChange(obj, ~, event)
+            obj.boundaryTransparency = event.Source.Value / 100;
             obj.updateAlphaData();
         end
         
         function handleClickDown(obj, handle, event) %#ok<INUSL>
             pos = round([event.IntersectionPoint(2), event.IntersectionPoint(1)]);
             if event.Button == 1
-                % Left click (set label)
+                % Left click
                 obj.drawStatus = 1;
+            elseif event.Button == 2
+                % Middle click
+                obj.drawStatus = 3;
             elseif event.Button == 3
-                % Right click (set unprocessed)
+                % Right click
                 obj.drawStatus = 2;
             elseif event.Button == 2
                 % Middle click (undo)
@@ -760,7 +778,12 @@ classdef CocoStuffAnnotator < handle & dynamicprops
         end
         
         function drawPos(obj, pos)
+            % Only act when a mouse button was clicked
             if obj.drawStatus ~= 0
+                % Initial values
+                updatedPixels = false;
+                labelIdx = obj.labelIdx; %#ok<PROPLC>
+                
                 if strcmp(obj.drawMode, 'pickLabel')
                     labelIdx = obj.handleLabelMap.CData(pos(1), pos(2)); %#ok<PROPLC>
                     
@@ -775,43 +798,130 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                     end
                     
                     % Set to drawing mode
-                    obj.drawMode = 'superpixelDraw';
+                    obj.drawMode = obj.drawModeDefault;
+                elseif strcmp(obj.drawMode, 'polygonDraw')
+                    if obj.drawStatus == 2
+                        % Undo last click
+                        
+                        % Abort if not enough points
+                        if size(obj.curPolygon, 1) <= 1
+                            if size(obj.curPolygon, 1) == 1
+                                obj.curPolygon = obj.curPolygon(1:end-1, :);
+                            end
+                            obj.handlePolygon.CData(:) = obj.cls_unprocessed;
+                            obj.updateAlphaData();
+                            return;
+                        end
+                        
+                        % Remove last point
+                        obj.curPolygon = obj.curPolygon(1:end-1, :);
+                        pos = obj.curPolygon(end, :);
+                        
+                        % Check that there was a last click
+                        if size(obj.curPolygon, 1) < 1
+                            return;
+                        end
+                        
+                        % Reset polygon layer
+                        obj.handlePolygon.CData(:) = obj.cls_unprocessed;
+                        
+                        % Update existing polygon preview
+                        if size(obj.curPolygon, 1) >= 3
+                            mask = poly2mask(obj.curPolygon(:, 2), obj.curPolygon(:, 1), obj.imageSize(1), obj.imageSize(2));
+                            [ys, xs] = find(mask);
+                            inds = sub2ind(obj.imageSize(1:2), ys, xs);
+                            obj.handlePolygon.CData(inds) = labelIdx; %#ok<PROPLC>
+                        end
+                        
+                        % Draw last polygon marker
+                        markerSize = 3;
+                        regionMapInds = obj.circleInds(pos, markerSize, obj.imageSize);
+                        obj.handlePolygon.CData(regionMapInds) = labelIdx; %#ok<PROPLC>
+                        
+                        obj.updateAlphaData();
+                        
+                    elseif obj.drawStatus == 3
+                        % Close polygon
+                        % (if we are close to the start or pressed right
+                        % click)
+                        
+                        % Only close it if we have at least 3 points
+                        if size(obj.curPolygon, 1) < 3
+                            return;
+                        end
+                        
+                        % Reset polygon layer
+                        obj.handlePolygon.CData(:) = obj.cls_unprocessed;
+                        
+                        % Get pixels inside polygon
+                        mask = poly2mask(obj.curPolygon(:, 2), obj.curPolygon(:, 1), obj.imageSize(1), obj.imageSize(2));
+                        [ys, xs] = find(mask);
+                        inds = sub2ind(obj.imageSize(1:2), ys, xs);
+                        
+                        % Reset polygon
+                        obj.curPolygon = [];
+                        
+                        % Reset polygon layer
+                        obj.handlePolygon.CData(:) = obj.cls_unprocessed;
+                        
+                        % Set update flag
+                        updatedPixels = true;
+                    else
+                        % Add new point
+                        obj.curPolygon = [obj.curPolygon; pos]; % each row: y, x
+                        
+                        % Reset polygon layer
+                        obj.handlePolygon.CData(:) = obj.cls_unprocessed;
+                        
+                        % Update existing polygon preview
+                        if size(obj.curPolygon, 1) >= 3
+                            mask = poly2mask(obj.curPolygon(:, 2), obj.curPolygon(:, 1), obj.imageSize(1), obj.imageSize(2));
+                            [ys, xs] = find(mask);
+                            inds = sub2ind(obj.imageSize(1:2), ys, xs);
+                            obj.handlePolygon.CData(inds) = labelIdx; %#ok<PROPLC>
+                        end
+                        
+                        % Draw new polygon marker
+                        markerSize = 3;
+                        regionMapInds = obj.circleInds(pos, markerSize, obj.imageSize);
+                        obj.handlePolygon.CData(regionMapInds) = labelIdx; %#ok<PROPLC>
+                        
+                        obj.updateAlphaData();
+                    end
                 else
+                    % (Super-)pixel based drawing
+                    
                     if obj.drawStatus == 1
                         labelIdx = obj.labelIdx; %#ok<PROPLC>
                     elseif obj.drawStatus == 2
                         labelIdx = obj.cls_unprocessed; %#ok<PROPLC>
                     end
                     
-                    % Draw current circle on pixels or superpixels
-                    if false
-                        % Square
-                        selY = max(1, pos(1)-obj.drawSize) : min(pos(1)+obj.drawSize, obj.imageSize(1)); %#ok<UNRCH>
-                        selX = max(1, pos(2)-obj.drawSize) : min(pos(2)+obj.drawSize, obj.imageSize(2));
-                        [selX, selY] = meshgrid(selX, selY);
-                    else
-                        % Circle
-                        xs = pos(2)-obj.drawSize : pos(2)+obj.drawSize;
-                        ys = pos(1)-obj.drawSize : pos(1)+obj.drawSize;
-                        [XS, YS] = meshgrid(xs, ys);
-                        dists = sqrt((XS - pos(2)) .^ 2 + (YS - pos(1)) .^ 2);
-                        valid = dists <= obj.drawSize - 0.1 & XS >= 1 & XS <= obj.imageSize(2) & YS >= 1 & YS <= obj.imageSize(1);
-                        selX = XS(valid);
-                        selY = YS(valid);
-                    end
-                    
                     if strcmp(obj.drawMode, 'superpixelDraw')
+                        % Draw current circle on pixels or superpixels
+                        regionMapInds = obj.circleInds(pos, obj.drawSize, obj.imageSize);
+                        
                         % Find selected superpixel and create its mask
-                        regionMapInds = sub2ind(size(obj.regionMap), selY, selX);
                         spInds = unique(obj.regionMap(regionMapInds));
                         [selY, selX] = find(ismember(obj.regionMap, spInds));
                         inds = sub2ind(obj.imageSize(1:2), selY, selX);
-                        indsIsOverwrite = (labelIdx == obj.cls_unprocessed | obj.drawOverwrite | obj.handleLabelMap.CData(inds) == obj.cls_unprocessed) ...
-                            & obj.handleLabelMap.CData(inds) ~= obj.cls_things; %#ok<PROPLC>
-                        inds = inds(indsIsOverwrite);
-                        obj.labelMapUndo = obj.handleLabelMap.CData;
-                        obj.handleLabelMap.CData(inds) = labelIdx; %#ok<PROPLC>
+                        
+                        
+                        % Set update flag
+                        updatedPixels = true;
+                    else
+                        error('Error: Unknown drawMode: %s', obj.drawMode);
                     end
+                end
+                
+                if updatedPixels
+                    % Update pixels and save previous state
+                    indsIsOverwrite = (labelIdx == obj.cls_unprocessed | obj.drawOverwrite ...
+                        | obj.handleLabelMap.CData(inds) == obj.cls_unprocessed) ...
+                        & obj.handleLabelMap.CData(inds) ~= obj.cls_things; %#ok<PROPLC>
+                    inds = inds(indsIsOverwrite);
+                    obj.labelMapUndo = obj.handleLabelMap.CData;
+                    obj.handleLabelMap.CData(inds) = labelIdx; %#ok<PROPLC>
                     
                     % Update history of when which pixels was changed
                     curDrawTime = obj.timeImagePrevious + toc(obj.timerImage);
@@ -835,9 +945,33 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             end
         end
         
+        function[inds] = squareInds(~, center, drawSize, imageSize)
+            % Square indices
+            selY = max(1, center(1)-drawSize) : min(center(1)+drawSize, imageSize(1));
+            selX = max(1, center(2)-drawSize) : min(center(2)+drawSize, imageSize(2));
+            [selX, selY] = meshgrid(selX, selY);
+            inds = sub2ind(imageSize, selY, selX);
+        end
+        
+        function[inds] = circleInds(~, center, drawSize, imageSize)
+            % Circle indices
+            % Slightly modified to remove the one odd pixel that often
+            % occurs along the horizontal or vertical through the center.
+            
+            xs = center(2)-drawSize : center(2)+drawSize;
+            ys = center(1)-drawSize : center(1)+drawSize;
+            [XS, YS] = meshgrid(xs, ys);
+            dists = sqrt((XS - center(2)) .^ 2 + (YS - center(1)) .^ 2);
+            valid = dists <= drawSize - 0.1 & XS >= 1 & XS <= imageSize(2) & YS >= 1 & YS <= imageSize(1);
+            selX = XS(valid);
+            selY = YS(valid);
+            inds = sub2ind(imageSize, selY, selX);
+        end
+        
         function updateAlphaData(obj)
             set(obj.handleLabelMap, 'AlphaData', obj.labelMapTransparency * double(obj.handleLabelMap.CData ~= obj.cls_unprocessed));
-            set(obj.handleOverlay, 'AlphaData', obj.overlayTransparency * obj.regionBoundaries);
+            set(obj.handleBoundary, 'AlphaData', obj.boundaryTransparency * obj.regionBoundaries);
+            set(obj.handlePolygon,  'AlphaData', obj.labelMapTransparency * double(obj.handlePolygon.CData ~= obj.cls_unprocessed));
         end
         
         function figMouseMove(obj, ~, ~)
@@ -848,7 +982,7 @@ classdef CocoStuffAnnotator < handle & dynamicprops
             imPoint = [imPoint(1, 2), imPoint(1, 1)];
             
             if 1 <= imPoint(1) && imPoint(1) <= obj.imageSize(1) && ...
-               1 <= imPoint(2) && imPoint(2) <= obj.imageSize(2)
+                    1 <= imPoint(2) && imPoint(2) <= obj.imageSize(2)
                 obj.drawPos(imPoint);
             end
         end
