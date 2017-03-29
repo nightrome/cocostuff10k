@@ -1006,27 +1006,9 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                 elseif strcmp(event.Character, 'q')
                     % Button label hierarchy
                     obj.buttonLabelHierarchyClick();
-                elseif strcmp(event.Character, 'w')
-                    % Button pick label
-                    obj.buttonPickLabelClick();
-                elseif strcmp(event.Character, 'e')
-                    % Button clear label
-                    obj.buttonClearLabelClick();
-                elseif strcmp(event.Character, 'r')
-                    % Button prev image
-                    obj.buttonPrevImageClick();
-                elseif strcmp(event.Character, 't')
-                    % Button jump image
-                    obj.buttonJumpImageClick();
-                elseif strcmp(event.Character, 'y')
-                    % Button next image
-                    obj.buttonNextImageClick();
                 elseif strcmp(event.Character, '1')
                     % Unlabeled class
-                    obj.setLabelIdx(2);
-                elseif strcmp(event.Character, '2')
-                    % Things class
-                    obj.setLabelIdx(4);
+                    obj.setLabelIdx(obj.cls_unlabeled);
                 elseif strcmp(event.Character, '+')
                     obj.ui.popupPointSize.Value = min(obj.ui.popupPointSize.Value + 1, numel(obj.ui.popupPointSize.String));
                     obj.drawSize = str2double(obj.ui.popupPointSize.String{obj.ui.popupPointSize.Value});
