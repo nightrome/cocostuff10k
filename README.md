@@ -7,6 +7,8 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 
 ## Overview
 - [Highlights](#highlights)
+- [Updates](#updates)
+- [Results and Future Plans](#results-and-future-plans)
 - [Dataset](#dataset)
 - [Semantic Segmentation Models](#semantic-segmentation-models)
 - [Annotation Tool](#annotation-tool)
@@ -26,7 +28,7 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - 10 Feb 2017: Added tools extract SLICO superpixels in annotation tool
 - 12 Dec 2016: Dataset version 1.0 and arXiv paper [1] released 
 
-## Results & Future plans
+## Results and Future Plans
 The current release of COCO-Stuff-10K publishes both the training and test annotations and users report their performance individually. We invite users to report their results to us to complement this table. In the near future we will extend COCO-Stuff to the 200K images in COCO 2015 and organize an official challenge where the test annotations will only be known to the organizers.
 
 Method       | Source| Class-average accuracy | Global accuracy | Mean IOU | FW IOU
@@ -54,11 +56,11 @@ To use the COCO-Stuff dataset, please follow these steps:
 5. Run the demo script in Matlab `demo_cocoStuff();`
 6. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
 
-### Label hierarchy
+### Label Hierarchy
 The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `CocoStuffClasses.showClassHierarchyStuffThings()` (also available for just stuff and just thing classes) in Matlab. The output should look similar to the following figure:
 <img src="http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-labelhierarchy.png" alt="COCO-Stuff label hierarchy" width="100%">
 
-### File format
+### File Format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
 - *S:* The pixel-wise label map of size [height x width]. For use in Matlab all label indices start from 1
 - *names:* The names of the 172 classes in COCO-Stuff. 1 is the class 'unlabeled', 2-81 are things and 82-172 are stuff classes.
