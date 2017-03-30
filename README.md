@@ -26,6 +26,16 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - 10 Feb 2017: Added tools extract SLICO superpixels in annotation tool
 - 12 Dec 2016: Dataset version 1.0 and arXiv paper [1] released 
 
+## Results & Future plans
+The current release of COCO-Stuff-10K publishes both the training and test annotations and users report their performance individually. We invite users to report their results to us to complement this table. In the near future we will extend COCO-Stuff to the 200K images in COCO 2015 and organize an official challenge where the test annotations will only be known to the organizers.
+
+Method       | Source| Class-average accuracy | Global accuracy | Mean IOU | FW IOU
+---          | ---   | ---                    | ---             | ---      | ---
+FCN [3]      | [1]   | 34.0%                  | 52.0%           | 22.7%    | -
+Deeplab (no CRF) [4] | [1]   | 38.1%          | 57.8%           | 26.9%    | -
+OHE + DC + FCN+ |[5] | 45.8%                  | 66.6%           | 34.3%    | 51.2%
+W2V + DC + FCN+ |[5] | 45.1%                  | 66.1%           | 34.7%    | 51.0%
+
 ## Dataset
 Filename | Description | Size
 --- | --- | ---
@@ -100,11 +110,15 @@ In *European Conference in Computer Vision* (ECCV), 2014.<br />
 
 - [3] [Fully convolutional networks for semantic segmentation](http://www.cv-foundation.org/openaccess/content_cvpr_2015/html/Long_Fully_Convolutional_Networks_2015_CVPR_paper.html)<br />
 J. Long, E. Shelhammer and T. Darrell,<br />
-in *Computer Vision and Pattern Recognition* (CVPR), 2015.<br />
+In *Computer Vision and Pattern Recognition* (CVPR), 2015.<br />
 
 - [4] [Semantic image segmentation with deep convolutional nets and fully connected CRFs](https://arxiv.org/abs/1412.7062)<br />
-L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy and A. L. Yuille,<br />
+L.-C. Chen, G. Papandreou, I. Kokkinos et al.,<br />
 In *International Conference on Learning Representations* (ICLR), 2015.<br />
+
+- [5] [LabelBank: Revisiting Global Perspectives for Semantic Segmentation](https://arxiv.org/pdf/1703.09891.pdf)<br />
+H. Hu, Z. Deng, G.-T. Zhou et al.<br />
+In *arXiv preprint arXiv:1703.09891*, 2017.<br />
 
 ### Licensing
 COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not in any form endorse this work. Different licenses apply:
