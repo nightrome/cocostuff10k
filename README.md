@@ -23,6 +23,7 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - 5 captions per image from COCO [2]
 
 ## Updates
+- 31 Mar 2017: Published annotations in JSON format
 - 09 Mar 2017: Added label hierarchy scripts
 - 08 Mar 2017: Corrections to table 2 in arXiv paper [1]
 - 10 Feb 2017: Added tools extract SLICO superpixels in annotation tool
@@ -41,7 +42,8 @@ W2V + DC + FCN+ |[5] | 45.1%                  | 66.1%           | 34.7%    | 51.
 ## Dataset
 Filename | Description | Size
 --- | --- | ---
-[cocostuff-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-data-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
+[cocostuff-10k-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-data-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
+[cocostuff-10k-v1.1.json](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.json) | (optional, experimental!) COCO-Stuff annotations in JSON format | 62.3 MB
 [cocostuff-readme.txt](https://raw.githubusercontent.com/nightrome/cocostuff/master/README.md) | This document | 6.5 KB
 
 ### Usage
@@ -55,6 +57,9 @@ To use the COCO-Stuff dataset, please follow these steps:
 4. Add the code folder to your Matlab path: `startup();`
 5. Run the demo script in Matlab `demo_cocoStuff();`
 6. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
+
+### JSON Format
+Alternatively, we also provide annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download) above. These are created from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py). These only include stuff annotations, but no thing annotations. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO. Version 1.1 indicates that for compatibility with COCO, the stuff classes take the indices 92 - 182 (formerly 82 - 172). Note that COCO has 91 classes (some of which were removed, because they were not frequent enough).
 
 ### Label Hierarchy
 The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `CocoStuffClasses.showClassHierarchyStuffThings()` (also available for just stuff and just thing classes) in Matlab. The output should look similar to the following figure:
