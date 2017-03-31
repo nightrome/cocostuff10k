@@ -36,8 +36,8 @@ Method       | Source| Class-average accuracy | Global accuracy | Mean IOU | FW 
 ---          | ---   | ---                    | ---             | ---      | ---
 FCN [3]      | [1]   | 34.0%                  | 52.0%           | 22.7%    | -
 Deeplab (no CRF) [4] | [1]   | 38.1%          | 57.8%           | 26.9%    | -
-OHE + DC + FCN+ |[5] | 45.8%                  | 66.6%           | 34.3%    | 51.2%
-W2V + DC + FCN+ |[5] | 45.1%                  | 66.1%           | 34.7%    | 51.0%
+OHE + DC + FCN+ [5]|[5] | 45.8%                  | 66.6%           | 34.3%    | 51.2%
+W2V + DC + FCN+ [5]|[5] | 45.1%                  | 66.1%           | 34.7%    | 51.0%
 
 ## Dataset
 Filename | Description | Size
