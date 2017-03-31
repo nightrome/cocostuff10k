@@ -42,8 +42,8 @@ W2V + DC + FCN+ |[5] | 45.1%                  | 66.1%           | 34.7%    | 51.
 ## Dataset
 Filename | Description | Size
 --- | --- | ---
-[cocostuff-10k-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-data-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
-[cocostuff-10k-v1.1.json](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.json) | (optional, experimental!) COCO-Stuff annotations in JSON format | 62.3 MB
+[cocostuff-10k-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
+[cocostuff-10k-v1.1-stuffOnly.json](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1-stuffOnly.json) | (optional, experimental!) COCO-Stuff annotations in JSON format | 62.3 MB
 [cocostuff-readme.txt](https://raw.githubusercontent.com/nightrome/cocostuff/master/README.md) | This document | 6.5 KB
 
 ### Usage
