@@ -45,7 +45,7 @@ Filename | Description | Size
 --- | --- | ---
 [cocostuff-10k-v1.1.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.zip) | COCO-Stuff dataset v. 1.1, images and annotations | 2.0 GB
 [cocostuff-10k-v1.1.json](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.json) | (optional) COCO-Stuff dataset v. 1.1, annotations in JSON format | 62.3 MB
-[cocostuff-labels.txt](https://raw.githubusercontent.com/nightrome/cocostuff/dataset/cocostuff-labels.txt) | A list of the 1+91+91 classes in COCO-Stuff | 2.3 KB
+[cocostuff-labels.txt](https://raw.githubusercontent.com/nightrome/cocostuff/master/dataset/cocostuff-labels.txt) | A list of the 1+91+91 classes in COCO-Stuff | 2.3 KB
 [cocostuff-readme.txt](https://raw.githubusercontent.com/nightrome/cocostuff/master/README.md) | This document | 6.5 KB
 **Older files** |  | 
 [cocostuff-10k-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
