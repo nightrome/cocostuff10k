@@ -55,7 +55,8 @@ To use the COCO-Stuff dataset, please follow these steps:
 
 1. Download or clone this repository using git: `git clone https://github.com/nightrome/cocostuff.git`
 2. Open the dataset folder in your shell: `cd cocostuff`
-3. Download and unzip the dataset:
+3. Download and unzip the dataset in Matlab: `downloadData()`<br />
+   Or alternatively run the following Linux commands:
   - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.zip`
   - `unzip downloads/cocostuff-10k-v1.1.zip -d dataset/`
 4. Add the code folder to your Matlab path: `startup();`
@@ -74,7 +75,7 @@ The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `C
 
 ### File Format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
-- *S:* The pixel-wise label map of size [height x width]. For use in Matlab all label indices start from 1
+- *S:* The pixel-wise label map of size [height x width].
 - *names:* The names of the thing and stuff classes in COCO-Stuff. For more details see [label indices](https://github.com/nightrome/cocostuff#label-indices).
 - *captions:* Image captions from [2] that are annotated by 5 distinct humans on average.
 - *regionMapStuff:* A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
