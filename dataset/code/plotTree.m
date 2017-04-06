@@ -66,6 +66,7 @@ textInner = text(xs(~isLeaf) + 0.01, ys(~isLeaf) - 0.025, cats(~isLeaf), 'Vertic
 textLeaf  = text(xs( isLeaf) - 0.01, ys( isLeaf) - 0.02,  cats( isLeaf), 'VerticalAlignment', 'Bottom', 'HorizontalAlignment', 'left'); %#ok<NASGU>
 set(ax, 'XTick', [], 'YTick', [], 'Units', 'Normalized');
 ax.XLabel.String = '';
+axis off;
 
 % Rotate view
 camroll(90);

@@ -474,6 +474,7 @@ classdef CocoStuffClasses
             
             % Start figure
             figLabelHierarchy = figure();
+            set(gcf, 'Color', 'w');
             
             % Plot label hierarchy
             plotTree(nodes, cats,  1, figLabelHierarchy);
