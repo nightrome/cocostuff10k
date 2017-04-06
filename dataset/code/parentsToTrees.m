@@ -9,7 +9,7 @@ function[nodes, categories, heights] = parentsToTrees(parents)
 % treeplot(nodes');
 % [xs, ys] = treelayout(nodes);
 %
-% Copyright by Holger Caesar, 2016
+% Copyright by Holger Caesar, 2017
 
 % Extract categories and make sure they are unique
 categories = parents(:, 1);
@@ -27,7 +27,7 @@ for i = 2 : categoryCount
         error('Error: No parent node found for %s!', categories{i});
     end
     parentNode = find(strcmp(categories, parents(childNode, 2)));
-    assert(numel(parentNode) == 1, 'Error: Node %s has %d labels! Should be 1.', parents{childNode, 2}, numel(parentNode));
+    assert(numel(parentNode) == 1, 'Error: Node %s has %d parent labels! Should be 1.', parents{childNode, 2}, numel(parentNode));
     nodes(i) = parentNode;
     heights(i) = heights(parentNode) + 1;
 end
