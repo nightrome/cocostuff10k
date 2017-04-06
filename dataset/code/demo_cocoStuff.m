@@ -9,6 +9,9 @@
 %
 % Copyright by Holger Caesar, 2017
 
+% Download the dataset (if it didn't already happen)
+downloadData();
+
 % Get images
 datasetFolder = fullfile(cocoStuff_root(), 'dataset');
 imageListPath = fullfile(datasetFolder, 'imageLists', 'all.txt');
@@ -30,16 +33,20 @@ regionLabelsStuff = labelStruct.regionLabelsStuff;
 
 % Replace stuff labels with class 'unlabeled'
 labelMapThings = labelMap;
-labelMapThings(labelMapThings > CocoStuffClasses.thingCount) = 1;
+labelMapThings(labelMapThings > CocoStuffClasses.thingCount) = 0;
 
-% Get stuff labels from superpixel labels
-labelMapStuff = regionLabelsStuff(regionMapStuff);
+% Replace thing labels with class 'unlabeled'
+labelMapStuff = labelMap;
+labelMapStuff(labelMapStuff <= CocoStuffClasses.thingCount) = 0;
+
+% Alternatively: Get stuff labels from superpixel labels
+% labelMapStuff = regionLabelsStuff(regionMapStuff);
 
 % Convert label maps to images
 cmap = cmapThingsStuff();
-labelMapThingsIm = ind2rgb(labelMapThings, cmap);
-labelMapStuffIm = ind2rgb(labelMapStuff, cmap);
-labelMapIm = ind2rgb(labelMap, cmap);
+labelMapThingsIm = ind2rgb(uint16(labelMapThings), cmap);
+labelMapStuffIm = ind2rgb(uint16(labelMapStuff), cmap);
+labelMapIm = ind2rgb(uint16(labelMap), cmap);
 
 % Insert label names into label map image
 labelMapThingsIm = imageInsertBlobLabels(labelMapThingsIm, labelMapThings, labelNames);

@@ -3,7 +3,7 @@ function[cmap] = cmapStuff()
 %
 % Returns the color map for stuff labels in CocoStuff.
 %
-% Copyright by Holger Caesar, 2016
+% Copyright by Holger Caesar, 2017
 
 % Settings
 stuffCount = CocoStuffClasses.stuffCount;
@@ -22,4 +22,3 @@ stuffColors = stuffColors(randperm(stuffCount), :);
 rng(backup);
 
 cmap = [0, 0, 0; stuffColors];
-end
