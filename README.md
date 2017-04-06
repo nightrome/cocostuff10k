@@ -43,9 +43,9 @@ W2V + DC + FCN+ [5]   | [5]   | 45.1%                   | 66.1%           | 34.7
 ## Dataset
 Filename | Description | Size
 --- | --- | ---
-[cocostuff-10k-v1.1.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.zip) | COCO-Stuff dataset version 1.1, including images and annotations | 2.0 GB
-[cocostuff-10k-v1.1-stuffOnly.json](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1-stuffOnly.json) | (optional, experimental!) COCO-Stuff annotations in JSON format | 62.3 MB
-[cocostuff-labels.txt](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-labels.txt) | A list of the 1+91+91 classes in COCO-Stuff | 2.3 KB
+[cocostuff-10k-v1.1.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.zip) | COCO-Stuff dataset v. 1.1, images and annotations | 2.0 GB
+[cocostuff-10k-v1.1.json](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.json) | (optional) COCO-Stuff dataset v. 1.1, annotations in JSON format | 62.3 MB
+[cocostuff-labels.txt](https://raw.githubusercontent.com/nightrome/cocostuff/dataset/cocostuff-labels.txt) | A list of the 1+91+91 classes in COCO-Stuff | 2.3 KB
 [cocostuff-readme.txt](https://raw.githubusercontent.com/nightrome/cocostuff/master/README.md) | This document | 6.5 KB
 **Older files** |  | 
 [cocostuff-10k-v1.0.zip](http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.0.zip) | COCO-Stuff dataset version 1.0, including images and annotations | 2.6 GB
@@ -67,7 +67,7 @@ To use the COCO-Stuff dataset, please follow these steps:
 To be compatible with COCO, version 1.1 of COCO-Stuff has 91 thing classes (1-91), 91 stuff classes (92-182) and 1 class "unlabeled" (0). Note that 11 of the thing classes (from COCO 2015) do not have any segmentation annotations. The older version 1.0 of COCO-Stuff had 80 thing classes (2-81), 91 classes (82-172) and 1 class "unlabeled" (1), but was otherwise identical.
 
 ### JSON Format
-Alternatively, we also provide annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download) above. These are created from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py). They include stuff, but no thing annotations, as these are already in COCO. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO.
+Alternatively, we also provide annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download) above. These are created from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py). They include stuff and thing annotations. The thing annotations are copied from COCO. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO.
 
 ### Label Hierarchy
 The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `CocoStuffClasses.showClassHierarchyStuffThings()` (also available for just stuff and just thing classes) in Matlab. The output should look similar to the following figure:
