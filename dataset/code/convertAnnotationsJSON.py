@@ -2,9 +2,12 @@
 
 # convertAnnotationsJSON
 #
-# This script converts the .mat file annotations of the COCO-Stuff into a single .json file compatible with the COCO API.
-# Stuff classes take the indices 92-182.
-# To run this script you need to download the COCO-Stuff code, COCO-Stuff dataset, COCO annotations and COCO API.
+# This script converts the .mat file annotations of the COCO-Stuff v. 1.1 
+# into a single .json file compatible with the COCO API.
+#
+# To run this script you need to download the COCO-Stuff code,
+# COCO-Stuff dataset, COCO annotations and COCO API.
+#
 # For more information, go to: https://github.com/nightrome/cocostuff
 #
 # Copyright by Holger Caesar, 2017
@@ -13,14 +16,19 @@
 import inspect, os
 rootFolder = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))))
 annotFolder = os.path.join(rootFolder, 'dataset', 'annotations')
-jsonPath = os.path.join(rootFolder, 'dataset', 'cocostuff-10k-v1.1-stuffOnly.json')
+stuffOnly = False
 cocoApiFolder = os.path.join(rootFolder, 'downloads', 'cocoApi', 'coco-336d2a27c91e3c0663d2dcf0b13574674d30f88e', 'PythonAPI')
 annPath = os.path.join(rootFolder, 'downloads', 'instances_train-val2014', 'annotations', 'instances_train2014.json')
+if stuffOnly:
+    jsonPath = os.path.join(rootFolder, 'dataset', 'cocostuff-10k-v1.1-stuffOnly.json')
+else:
+    jsonPath = os.path.join(rootFolder, 'dataset', 'cocostuff-10k-v1.1.json')
 indent = 0
 separators = (',', ':')
 ensure_ascii = False
-oldStuffStartIdx = 82
+oldStuffStartIdx = 92
 newStuffStartIdx = 92
+useNewMatlabFileFormat = False
 
 # Add COCO to path
 import sys
@@ -29,7 +37,9 @@ sys.path.append(cocoApiFolder)
 from pycocotools import mask
 import numpy as np
 import pylab
-import h5py  # To open matlab files
+import scipy.io # To open matlab < 7.0 files
+import h5py     # To open matlab >=7.3 files
+
 import glob  # to get the files in a folder
 import io
 import json
@@ -53,12 +63,12 @@ with io.open(jsonPath, 'w', encoding='utf8') as outfile:
     outfile.write(unicode('{\n'))
 
     # Write info
-    infodata = {'description': 'This is the 1.0 release of the COCO-Stuff (10K) dataset.',
+    infodata = {'description': 'This is the 1.1 release of the COCO-Stuff (10K) dataset.',
                 'url': 'https://github.com/nightrome/cocostuff',
-                'version': '1.0',
+                'version': '1.1',
                 'year': 2017,
                 'contributor': 'H. Caesar, J. Uijlings and V. Ferrari',
-                'date_created': '2016-12-12 12:00:00.0'},
+                'date_created': '2017-04-06 12:00:00.0'},
     infodata = {'info': infodata}
     str_ = json.dumps(infodata, indent=indent, sort_keys=True, separators=separators, ensure_ascii=ensure_ascii)
     str_ = str_[1:-2] + ',\n'  # Remove brackets and add comma
@@ -187,19 +197,41 @@ with io.open(jsonPath, 'w', encoding='utf8') as outfile:
 
         # Read annotation file
         annotPath = os.path.join(annotFolder, imageName)
-        matfile = h5py.File(annotPath)
-        S = matfile['S'].value
+        if useNewMatlabFileFormat:
+            matfile = h5py.File(annotPath)
+            S = matfile['S'].value
+        else:
+            matfile = scipy.io.loadmat(annotPath)
+            S = matfile['S']
+
         [h, w] = S.shape
         regionLabelsStuff = matfile['regionLabelsStuff']
         labelsAll = np.unique(regionLabelsStuff)
         labelsStuff = [i for i in labelsAll if i >= oldStuffStartIdx]
+
+        # Add thing annotations from COCO
+        if not stuffOnly:
+            anndatas = [i for i in data['annotations'] if i['image_id'] == imageIds[imageIdx]]
+
+            for i in xrange(0, len(anndatas)):
+                # Write JSON
+                str_ = json.dumps(anndatas[i], indent=indent, sort_keys=True, separators=separators, ensure_ascii=ensure_ascii)
+                outfile.write(unicode(str_))
+
+                # Increment ann id
+                annId = annId + 1
+
+                # Add a comma and line break after each annotation
+                if not (imageIdx == imageCount-1 and i == len(labelsStuff)-1):
+                    outfile.write(unicode(','))
+                outfile.write(unicode('\n'))
 
         # Accumulate label masks
         for i, labelIdx in enumerate(labelsStuff):
             # Create mask and encode it
             labelMask = np.zeros((h, w))
             labelMask[:, :] = S == labelIdx
-            labelMask = labelMask.transpose()
+            #labelMask = labelMask.transpose() # TODO: When do we need to transpose the labelMask?
             labelMask = np.expand_dims(labelMask, axis=2)
             labelMask = labelMask.astype('uint8')
             labelMask = np.asfortranarray(labelMask)
@@ -209,17 +241,18 @@ with io.open(jsonPath, 'w', encoding='utf8') as outfile:
             anndata = {}
             anndata['id'] = annId
             anndata['image_id'] = imageIds[imageIdx]
-            anndata['category_id'] = labelIdx - oldStuffStartIdx + newStuffStartIdx # Stuff classes start from 92 in Python format
+            anndata['category_id'] = labelIdx - oldStuffStartIdx + newStuffStartIdx # Stuff classes start from 92 in v. 1.1
             anndata['segmentation'] = Rs
             anndata['area'] = float(mask.area(Rs))
             anndata['bbox'] = mask.toBbox(Rs).tolist()
             anndata['iscrowd'] = 1
 
-            annId = annId + 1
-
             # Write JSON
             str_ = json.dumps(anndata, indent=indent, sort_keys=True, separators=separators, ensure_ascii=ensure_ascii)
             outfile.write(unicode(str_))
+
+            # Increment ann id
+            annId = annId + 1
 
             # Add a comma and line break after each annotation
             if not (imageIdx == imageCount-1 and i == len(labelsStuff)-1):

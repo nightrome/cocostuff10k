@@ -1,4 +1,4 @@
 /downloads/
 *.mexa64
 annotator/data/input/
-dataset/cocostuff-10k-v1.1-stuffOnly.json
+dataset/*.json
