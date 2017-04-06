@@ -1,11 +1,13 @@
 % demo_cocoStuff()
 %
 % Shows the basic usage of the COCO-Stuff dataset.
-% The scripts starts by downloading the dataset files if necessary.
-% Then it loads an image, the ground-truth annotations and captions.
+%
+% Use the instructions here to install the dataset:
+% https://github.com/nightrome/cocostuff#usage
+% The scripts loads an image, the ground-truth annotations and captions.
 % Matlab's Vision Toolbox is required to display the captions.
 %
-% Copyright by Holger Caesar, 2016
+% Copyright by Holger Caesar, 2017
 
 % Get images
 datasetFolder = fullfile(cocoStuff_root(), 'dataset');
@@ -28,8 +30,7 @@ regionLabelsStuff = labelStruct.regionLabelsStuff;
 
 % Replace stuff labels with class 'unlabeled'
 labelMapThings = labelMap;
-thingCount = 80;
-labelMapThings(labelMapThings > 1+thingCount) = 1;
+labelMapThings(labelMapThings > CocoStuffClasses.thingCount) = 1;
 
 % Get stuff labels from superpixel labels
 labelMapStuff = regionLabelsStuff(regionMapStuff);

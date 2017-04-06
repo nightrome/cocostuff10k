@@ -6,7 +6,7 @@ classdef CocoStuffClasses
     % Copyright by Holger Caesar, 2017
     
     properties (Constant)
-        thingCount = 80;
+        thingCount = 91;
         stuffCount = 91;
     end
     
@@ -51,6 +51,7 @@ classdef CocoStuffClasses
         function[labelNames, labelCount] = getLabelNamesThingsStuff()
             % [labelNames, labelCount] = getLabelNamesThingsStuff()
             %
+            % Return thing and stuff classes in order.
             % Does not include "unlabeled" class!
             
             % Get stuff labels

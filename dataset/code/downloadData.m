@@ -4,10 +4,10 @@ function downloadData()
 % Downloads the data files of the COCO-Stuff dataset.
 % This data includes annotations, images and imageLists.
 %
-% Copyright by Holger Caesar, 2016
+% Copyright by Holger Caesar, 2017
 
 % Settings
-datasetFile = 'cocostuff-data-v1.0.zip';
+datasetFile = 'cocostuff-10k-v1.1.zip';
 datasetBaseUrl = 'http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset';
 datasetUrl = fullfile(datasetBaseUrl, datasetFile);
 rootFolder = cocoStuff_root();
