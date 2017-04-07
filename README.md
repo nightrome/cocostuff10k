@@ -109,6 +109,7 @@ We provide a basic version of our annotation tool:
   - Create a list of images in `annotator/data/input/imageLists/<user>.list`.
   - Extract the thing annotations for all images in Matlab: `extractThings()`.
   - Extract the superpixels for all images in Matlab: `extractSLICOSuperpixels()`.
+  - To enable or disable superpixels, thing annotations and polygon drawing, take a look at the flags at the top of `CocoStuffAnnotator.m`.
 - Run the annotation tool in Matlab: `CocoStuffAnnotator();`
   - The tool writes the .mat label files to `annotator/data/output/annotations`.
   - To create a .png preview of the annotations, run `annotator/code/exportImages.m` in Matlab. The previews will be saved to `annotator/data/output/preview`.
