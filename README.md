@@ -78,12 +78,14 @@ The older version 1.0 of COCO-Stuff had 80 thing classes (2-81), 91 stuff classe
 ### File Format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
 - *S:* The pixel-wise label map of size [height x width].
-- *names:* The names of the thing and stuff classes in COCO-Stuff. For more details see [label indices](https://github.com/nightrome/cocostuff#label-names--indices).
+- *names:* The names of the thing and stuff classes in COCO-Stuff. For more details see [Label Names & Indices](https://github.com/nightrome/cocostuff#label-names--indices).
 - *captions:* Image captions from [2] that are annotated by 5 distinct humans on average.
 - *regionMapStuff:* A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
 - *regionLabelsStuff:* A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
 
 ## Semantic Segmentation Models
+*Note: This section will be updated to v. 1.1 soon...*
+
 To encourage further research of stuff and things we provide the trained semantic segmentation model (see Sect. 4.4 in [1]).
 
 ### DeepLab
