@@ -55,13 +55,9 @@ To use the COCO-Stuff dataset, please follow these steps:
 
 1. Download or clone this repository using git: `git clone https://github.com/nightrome/cocostuff.git`
 2. Open the dataset folder in your shell: `cd cocostuff`
-3. Download and unzip the dataset in Matlab: `downloadData()`<br />
-   Or alternatively run the following Linux commands:
-  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.zip`
-  - `unzip downloads/cocostuff-10k-v1.1.zip -d dataset/`
-4. Add the code folder to your Matlab path: `startup();`
-5. Run the demo script in Matlab `demo_cocoStuff();`
-6. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
+3. Add the code folder to your Matlab path: `startup();`
+4. Run the demo script in Matlab `demo_cocoStuff();`
+5. The script displays an image, its thing, stuff and thing+stuff annotations, as well as the image captions.
 
 ### JSON Format
 Alternatively, we also provide annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download) above. These are created from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py). They include stuff and thing annotations. The thing annotations are copied from COCO. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO.
