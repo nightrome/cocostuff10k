@@ -222,11 +222,10 @@ with io.open(jsonPath, 'w', encoding='utf8') as outfile:
                 annId = annId + 1
 
                 # Add a comma and line break after each annotation
-                if not (imageIdx == imageCount-1 and i == len(labelsStuff)-1):
-                    outfile.write(unicode(','))
+                outfile.write(unicode(','))
                 outfile.write(unicode('\n'))
 
-        # Accumulate label masks
+        # Add stuff annotations
         for i, labelIdx in enumerate(labelsStuff):
             # Create mask and encode it
             labelMask = np.zeros((h, w))
