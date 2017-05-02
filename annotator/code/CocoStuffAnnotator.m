@@ -815,7 +815,6 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                         
                         % Remove last point
                         obj.curPolygon = obj.curPolygon(1:end-1, :);
-                        pos = obj.curPolygon(end, :);
                         
                         % Check that there was a last click
                         if size(obj.curPolygon, 1) < 1
@@ -832,11 +831,6 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                             inds = sub2ind(obj.imageSize(1:2), ys, xs);
                             obj.handlePolygon.CData(inds) = labelIdx; %#ok<PROPLC>
                         end
-                        
-                        % Draw last polygon marker
-                        markerSize = 3;
-                        regionMapInds = obj.circleInds(pos, markerSize, obj.imageSize);
-                        obj.handlePolygon.CData(regionMapInds) = labelIdx; %#ok<PROPLC>
                         
                         obj.updateAlphaData();
                         
@@ -881,10 +875,10 @@ classdef CocoStuffAnnotator < handle & dynamicprops
                             obj.handlePolygon.CData(inds) = labelIdx; %#ok<PROPLC>
                         end
                         
-                        % Draw new polygon marker
-                        markerSize = 3;
-                        regionMapInds = obj.circleInds(pos, markerSize, obj.imageSize);
-                        obj.handlePolygon.CData(regionMapInds) = labelIdx; %#ok<PROPLC>
+%                         % Draw new polygon marker
+%                         markerSize = 3;
+%                         regionMapInds = obj.circleInds(pos, markerSize, obj.imageSize);
+%                         obj.handlePolygon.CData(regionMapInds) = labelIdx; %#ok<PROPLC>
                         
                         obj.updateAlphaData();
                     end

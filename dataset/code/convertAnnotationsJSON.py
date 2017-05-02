@@ -230,7 +230,6 @@ with io.open(jsonPath, 'w', encoding='utf8') as outfile:
             # Create mask and encode it
             labelMask = np.zeros((h, w))
             labelMask[:, :] = S == labelIdx
-            #labelMask = labelMask.transpose() # TODO: When do we need to transpose the labelMask?
             labelMask = np.expand_dims(labelMask, axis=2)
             labelMask = labelMask.astype('uint8')
             labelMask = np.asfortranarray(labelMask)
