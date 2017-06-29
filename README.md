@@ -35,10 +35,12 @@ The current release of COCO-Stuff-10K publishes both the training and test annot
 
 Method                | Source| Class-average accuracy  | Global accuracy | Mean IOU | FW IOU
 ---                   | ---   | ---                     | ---             | ---      | ---
-FCN [3]               | [1]   | 34.0%                   | 52.0%           | 22.7%    | -
+FCN-16s [3]           | [1]   | 34.0%                   | 52.0%           | 22.7%    | -
 Deeplab (no CRF) [4]  | [1]   | 38.1%                   | 57.8%           | 26.9%    | -
-OHE + DC + FCN+ [5]   | [5]   | 45.8%                   | 66.6%           | 34.3%    | 51.2%
-W2V + DC + FCN+ [5]   | [5]   | 45.1%                   | 66.1%           | 34.7%    | 51.0%
+FCN-8s [3]            | [6]   | 38.5%                   | 60.4%           | 27.2%    | -
+DAG-RNN + CRF [6]     | [6]   | 42.8%                   | 63.0%           | 31.2%    | -
+OHE + DC + FCN+ [5]   | [5]   | **45.8%**               | **66.6%**       | 34.3%    | **51.2%**
+W2V + DC + FCN+ [5]   | [5]   | 45.1%                   | 66.1%           | **34.7%**| 51.0%
 
 ## Dataset
 Filename | Description | Size
@@ -140,6 +142,10 @@ In *International Conference on Learning Representations* (ICLR), 2015.<br />
 - [5] [LabelBank: Revisiting Global Perspectives for Semantic Segmentation](https://arxiv.org/pdf/1703.09891.pdf)<br />
 H. Hu, Z. Deng, G.-T. Zhou et al.<br />
 In *arXiv preprint arXiv:1703.09891*, 2017.<br />
+
+- [6] [Scene Segmentation with DAG-Recurrent Neural Networks](http://ieeexplore.ieee.org/abstract/document/7940028/)<br />
+B. Shuai, Z. Zuo, B. Wang<br />
+In *IEEE Transactions on Pattern Analysis and Machine Intelligence* (PAMI), 2017.<br />
 
 ### Licensing
 COCO-Stuff is a derivative work of the COCO dataset. The authors of COCO do not in any form endorse this work. Different licenses apply:
