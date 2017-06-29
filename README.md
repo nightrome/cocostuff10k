@@ -3,7 +3,7 @@
 
 ## Overview
 <img src="http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-examples.png" alt="COCO-Stuff example annotations" width="100%">
-Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the popular COCO [2] dataset with pixel-level stuff annotations. These annotations can be used for scene understanding tasks like semantic segmentation, object detection and image captioning.
+Welcome to official homepage of the COCO-Stuff [1] dataset. COCO-Stuff augments the popular COCO [2] dataset with pixel-level stuff annotations. These annotations can be used for scene understanding tasks like semantic segmentation, object detection and image captioning.
 
 ## Overview
 - [Highlights](#highlights)
@@ -27,7 +27,7 @@ Welcome to this release of the COCO-Stuff [1] dataset. COCO-Stuff augments the p
 - 31 Mar 2017: Published annotations in JSON format
 - 09 Mar 2017: Added label hierarchy scripts
 - 08 Mar 2017: Corrections to table 2 in arXiv paper [1]
-- 10 Feb 2017: Added tools extract SLICO superpixels in annotation tool
+- 10 Feb 2017: Added script to extract SLICO superpixels in annotation tool
 - 12 Dec 2016: Dataset version 1.0 and arXiv paper [1] released 
 
 ## Results and Future Plans
