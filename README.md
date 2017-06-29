@@ -36,7 +36,7 @@ The current release of COCO-Stuff-10K publishes both the training and test annot
 Method                | Source| Class-average accuracy  | Global accuracy | Mean IOU | FW IOU
 ---                   | ---   | ---                     | ---             | ---      | ---
 FCN-16s [3]           | [1]   | 34.0%                   | 52.0%           | 22.7%    | -
-Deeplab (no CRF) [4]  | [1]   | 38.1%                   | 57.8%           | 26.9%    | -
+Deeplab VGG-16 (no CRF) [4]  | [1]   | 38.1%                   | 57.8%           | 26.9%    | -
 FCN-8s [3]            | [6]   | 38.5%                   | 60.4%           | 27.2%    | -
 DAG-RNN + CRF [6]     | [6]   | 42.8%                   | 63.0%           | 31.2%    | -
 OHE + DC + FCN+ [5]   | [5]   | **45.8%**               | **66.6%**       | 34.3%    | **51.2%**
