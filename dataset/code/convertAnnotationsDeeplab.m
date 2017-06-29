@@ -24,7 +24,7 @@ for i = 1 : numel(imgs_dir)
     
     labelStruct = load(fullfile(annotationFolder, imgs_dir(i).name));
     labelMap = labelStruct.S;
-    assert(max(labelMap(:)) <= 172);
+    assert(max(labelMap(:)) <= 182);
     labelMap = labelMap - 1;
     labelMap(labelMap == -1) = 255;
     labelMap = uint8(labelMap);
