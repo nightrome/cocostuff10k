@@ -92,7 +92,7 @@ The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `C
 To encourage further research of stuff and things we provide the trained semantic segmentation model (see Sect. 4.4 in [1]).
 
 ### DeepLab
-Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
+Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2), which is built on [Caffe](caffe.berkeleyvision.org):
 
 1. Install Cuda. I recommend version 7.0. For version 8.0 you will need to apply the fix described [here](https://stackoverflow.com/questions/39274472/error-function-atomicadddouble-double-has-already-been-defined) in step 3.
 2. Download deeplab-public-ver2: `git submodule update --init models/deeplab/deeplab-public-ver2`
@@ -103,7 +103,7 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
   - `make all -j8`
   - `cd ../..`
 4. Download the base VGG-16 model:
-  - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_vgg16 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/init.caffemodel`
+  - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_vgg16 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/deeplabv2_vgg16_init.caffemodel`
 5. Configure the COCO-Stuff dataset:
   - Create folders: `mkdir models/deeplab/deeplab-public-ver2/cocostuff && mkdir models/deeplab/deeplab-public-ver2/cocostuff/data`
   - Create a symbolic link to the images: `cd models/deeplab/cocostuff/data && ln -s ../../../../dataset/images images && cd ../../../..`
