@@ -36,7 +36,7 @@ The current release of COCO-Stuff-10K publishes both the training and test annot
 Method                | Source| Class-average accuracy  | Global accuracy | Mean IOU | FW IOU
 ---                   | ---   | ---                     | ---             | ---      | ---
 FCN-16s [3]           | [1]   | 34.0%                   | 52.0%           | 22.7%    | -
-Deeplab (no CRF) [4]  | [1]   | 38.1%                   | 57.8%           | 26.9%    | -
+Deeplab VGG-16 (no CRF) [4]  | [1]   | 38.1%                   | 57.8%           | 26.9%    | -
 FCN-8s [3]            | [6]   | 38.5%                   | 60.4%           | 27.2%    | -
 DAG-RNN + CRF [6]     | [6]   | 42.8%                   | 63.0%           | 31.2%    | -
 OHE + DC + FCN+ [5]   | [5]   | **45.8%**               | **66.6%**       | 34.3%    | **51.2%**
@@ -65,26 +65,28 @@ To use the COCO-Stuff dataset, please follow these steps:
   - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.zip`
   - `unzip downloads/cocostuff-10k-v1.1.zip -d dataset/`
 
-
-### JSON Format
-Alternatively, we also provide annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download) above. These are created from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py). They include stuff and thing annotations. The thing annotations are copied from COCO. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO.
-
-### Label Hierarchy
-The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `CocoStuffClasses.showClassHierarchyStuffThings()` (also available for just stuff and just thing classes) in Matlab. The output should look similar to the following figure:
-<img src="https://github.com/nightrome/cocostuff/blob/master/dataset/cocostuff-labelhierarchy.png?raw=true" alt="COCO-Stuff label hierarchy" width="100%">
-
-### Label Names & Indices
-To be compatible with COCO, version 1.1 of COCO-Stuff has 91 thing classes (1-91), 91 stuff classes (92-182) and 1 class "unlabeled" (0). Note that 11 of the thing classes from COCO 2015 do not have any segmentation annotations. The classes desk, door and mirror could be either stuff or things and therefore occur in both COCO and COCO-Stuff. To avoid confusion we add the suffix "-stuff" to those classes in COCO-Stuff. The full list of classes can be found [here](https://raw.githubusercontent.com/nightrome/cocostuff/master/dataset/cocostuff-labels.txt).
-
-The older version 1.0 of COCO-Stuff had 80 thing classes (2-81), 91 stuff classes (82-172) and 1 class "unlabeled" (1).
-
-### File Format
+### MAT Format
 The COCO-Stuff annotations are stored in separate .mat files per image. These files follow the same format as used by Tighe et al.. Each file contains the following fields:
 - *S:* The pixel-wise label map of size [height x width].
 - *names:* The names of the thing and stuff classes in COCO-Stuff. For more details see [Label Names & Indices](https://github.com/nightrome/cocostuff#label-names--indices).
 - *captions:* Image captions from [2] that are annotated by 5 distinct humans on average.
 - *regionMapStuff:* A map of the same size as S that contains the indices for the approx. 1000 regions (superpixels) used to annotate the image.
 - *regionLabelsStuff:* A list of the stuff labels for each superpixel. The indices in regionMapStuff correspond to the entries in regionLabelsStuff.
+
+### JSON Format
+Alternatively, we also provide stuff and thing annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download). The thing annotations are copied from COCO. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO. To get the annotations:
+- Either download them: `wget --directory-prefix=dataset/annotations-json http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.json
+`
+- Or extract them from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py).
+
+### Label Names & Indices
+To be compatible with COCO, version 1.1 of COCO-Stuff has 91 thing classes (1-91), 91 stuff classes (92-182) and 1 class "unlabeled" (0). Note that 11 of the thing classes from COCO 2015 do not have any segmentation annotations. The classes desk, door and mirror could be either stuff or things and therefore occur in both COCO and COCO-Stuff. To avoid confusion we add the suffix "-stuff" to those classes in COCO-Stuff. The full list of classes can be found [here](https://raw.githubusercontent.com/nightrome/cocostuff/master/dataset/cocostuff-labels.txt).
+
+The older version 1.0 of COCO-Stuff had 80 thing classes (2-81), 91 stuff classes (82-172) and 1 class "unlabeled" (1).
+
+### Label Hierarchy
+The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `CocoStuffClasses.showClassHierarchyStuffThings()` (also available for just stuff and just thing classes) in Matlab. The output should look similar to the following figure:
+<img src="https://github.com/nightrome/cocostuff/blob/master/dataset/cocostuff-labelhierarchy.png?raw=true" alt="COCO-Stuff label hierarchy" width="100%">
 
 ## Semantic Segmentation Models
 *Note: This section will be updated to v. 1.1 soon...*
