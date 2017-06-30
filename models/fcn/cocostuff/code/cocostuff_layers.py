@@ -97,7 +97,7 @@ class COCOSTUFFSegDataLayer(caffe.Layer):
         - subtract mean
         - transpose to channel x height x width order
         """
-        im = Image.open('{}/images/{}.jpg'.format(self.cocostuff_dir, idx))
+        im = Image.open('{}/data/images/{}.jpg'.format(self.cocostuff_dir, idx))
         in_ = np.array(im, dtype=np.float32)
         in_ = in_[:,:,::-1]
         in_ -= self.mean
@@ -110,7 +110,7 @@ class COCOSTUFFSegDataLayer(caffe.Layer):
         Load label image as 1 x height x width integer array of label indices.
         The leading singleton dimension is required by the loss.
         """
-        im = Image.open('{}/annotations/{}.png'.format(self.cocostuff_dir, idx))
+        im = Image.open('{}/data/annotations/{}.png'.format(self.cocostuff_dir, idx))
         label = np.array(im, dtype=np.uint8)
         label = label[np.newaxis, ...]
         return label

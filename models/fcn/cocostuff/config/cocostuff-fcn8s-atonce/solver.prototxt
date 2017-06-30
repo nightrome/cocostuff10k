@@ -1,5 +1,5 @@
-train_net: "train.prototxt"
-test_net: "val.prototxt"
+train_net: "cocostuff/config/cocostuff-fcn8s-atonce/train.prototxt"
+test_net: "cocostuff/config/cocostuff-fcn8s-atonce/val.prototxt"
 test_iter: 736
 # make test net, but don't invoke it from the solver itself
 test_interval: 999999999
@@ -15,5 +15,5 @@ iter_size: 1
 max_iter: 300000
 weight_decay: 0.0005
 snapshot: 4000
-snapshot_prefix: "../../model"
+snapshot_prefix: "cocostuff/model"
 test_initialization: false
