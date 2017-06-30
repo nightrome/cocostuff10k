@@ -1,2 +1,3 @@
 Makefile.config
 modifypath.sh
+common.cuh
