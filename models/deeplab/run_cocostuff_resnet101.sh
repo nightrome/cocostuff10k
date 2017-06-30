@@ -18,7 +18,7 @@ fi
 
 ## Specify which model to train
 ########### voc12 ################
-NET_ID=deeplabv2_vgg16
+NET_ID=deeplabv2_resnet101
 if [ "${EPOCH}" -ne "-1" ]; then
   SNAPSHOT=${EXP}/model/${NET_ID}/train_iter_${EPOCH}.solverstate
 fi
@@ -47,7 +47,7 @@ if [ ${RUN_TRAIN} -eq 1 ]; then
     LIST_DIR=${EXP}/list
     TRAIN_SET=train${TRAIN_SET_SUFFIX}
     #
-    MODEL=${EXP}/model/${NET_ID}/init.caffemodel
+    MODEL=${EXP}/model/${NET_ID}/deeplabv2_resnet101_init.caffemodel
     #
     echo Training net ${EXP}/${NET_ID}
     for pname in train solver; do
