@@ -2,3 +2,11 @@
 	path = models/deeplab/deeplab-public-ver2
 	url = https://bitbucket.org/aquariusjay/deeplab-public-ver2
         ignore = dirty
+[submodule "models/fcn/fcn"]
+	path = models/fcn/fcn
+	url = https://github.com/shelhamer/fcn.berkeleyvision.org.git
+        ignore = dirty
+[submodule "models/fcn/caffe"]
+	path = models/fcn/caffe
+	url = https://github.com/BVLC/caffe.git
+        ignore = dirty
