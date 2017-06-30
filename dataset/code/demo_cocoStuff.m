@@ -3,7 +3,7 @@
 % Shows the basic usage of the COCO-Stuff dataset.
 %
 % Use the instructions here to install the dataset:
-% https://github.com/nightrome/cocostuff#usage
+% https://github.com/nightrome/cocostuff
 % The scripts loads an image, the ground-truth annotations and captions.
 % Matlab's Vision Toolbox is required to display the captions.
 %

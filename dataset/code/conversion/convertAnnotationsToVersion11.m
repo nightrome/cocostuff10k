@@ -1,5 +1,5 @@
-function upgradeLabelsToVersion11()
-% upgradeLabelsToVersion11()
+function convertAnnotationsToVersion11()
+% convertAnnotationsToVersion11()
 %
 % This script takes the unzipped contents of cocostuff-10k-v1.0.zip and
 % converts the annotations from version 1.0 to 1.1, where COCO has 91 thing
