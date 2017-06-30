@@ -9,7 +9,7 @@ function convertAnnotationsDeeplab()
 % Settings
 cocoStuffFolder = cocoStuff_root();
 annotationFolder = fullfile(cocoStuffFolder, 'dataset', 'annotations');
-saveFolder = fullfile(cocoStuffFolder, 'models', 'deeplab-public-ver2', 'cocostuff', 'data', 'annotations');
+saveFolder = fullfile(cocoStuffFolder, 'models', 'deeplab', 'cocostuff', 'data', 'annotations');
 
 % Get all images
 imgs_dir = dir(fullfile(annotationFolder, '*.mat'));
