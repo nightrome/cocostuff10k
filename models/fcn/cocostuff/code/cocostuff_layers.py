@@ -47,7 +47,7 @@ class COCOSTUFFSegDataLayer(caffe.Layer):
             raise Exception("Do not define a bottom.")
 
         # load indices for images and labels
-        split_f  = '{}/lists/{}.txt'.format(self.cocostuff_dir,
+        split_f  = '{}/list/{}.txt'.format(self.cocostuff_dir,
                 self.split)
         self.indices = open(split_f, 'r').read().splitlines()
         self.idx = 0

@@ -15,7 +15,7 @@ def fcn(split):
     n = caffe.NetSpec()
     pydata_params = dict(split=split, mean=(104.00699, 116.66877, 122.67892),
             seed=1337)
-    pydata_params['cocostuff_dir'] = '../data/cocostuff'
+    pydata_params['cocostuff_dir'] = 'cocostuff'
     pylayer = 'COCOSTUFFSegDataLayer'
     n.data, n.label = L.Python(module='cocostuff_layers', layer=pylayer,
             ntop=2, param_str=str(pydata_params))
@@ -94,7 +94,7 @@ def make_net():
         f.write(str(fcn('train')))
 
     with open('val.prototxt', 'w') as f:
-        f.write(str(fcn('seg11valid')))
+        f.write(str(fcn('val')))
 
 if __name__ == '__main__':
     make_net()
