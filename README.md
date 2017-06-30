@@ -89,26 +89,26 @@ The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `C
 <img src="https://github.com/nightrome/cocostuff/blob/master/dataset/cocostuff-labelhierarchy.png?raw=true" alt="COCO-Stuff label hierarchy" width="100%">
 
 ## Semantic Segmentation Models
-*Note: This section will be updated to v. 1.1 soon...*
-
 To encourage further research of stuff and things we provide the trained semantic segmentation model (see Sect. 4.4 in [1]).
 
 ### DeepLab
 Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and is built on [Caffe](caffe.berkeleyvision.org):
 
-1. Download deeplab-public-ver2: `git submodule update --init models/deeplab-public-ver2`
-2. Compile and configure deeplab-public-ver2 following the [author's instructions](https://bitbucket.org/aquariusjay/deeplab-public-ver2). Depending on your system setup you might have to install additional packages, but a minimum setup could look like this:
-  - `cd models/deeplab-public-ver2`
+1. Install Cuda. I recommend version 7.0. For version 8.0 you will need to apply the fix described [here](https://stackoverflow.com/questions/39274472/error-function-atomicadddouble-double-has-already-been-defined) in step 3.
+2. Download deeplab-public-ver2: `git submodule update --init models/deeplab/deeplab-public-ver2`
+3. Compile and configure deeplab-public-ver2 following the [author's instructions](https://bitbucket.org/aquariusjay/deeplab-public-ver2). Depending on your system setup you might have to install additional packages, but a minimum setup could look like this:
+  - `cd models/deeplab/deeplab-public-ver2`
   - `cp Makefile.config.example Makefile.config`
-  - `make`
+  - Optionally add CuDNN support or modify library paths in the Makefile.
+  - `make all -j8`
   - `cd ../..`
-3. Download and unzip the model:
-  - `wget --directory-prefix=downloads http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-deeplab.zip`
-  - `unzip downloads/cocostuff-deeplab.zip -d models/deeplab-public-ver2/`
-4. Configure the COCO-Stuff dataset:
-  - Create a symbolic link to the images: `mkdir models/deeplab-public-ver2/cocostuff/data && ln -s ../../../../dataset/images models/deeplab-public-ver2/cocostuff/data/images`
-  - Convert the annotations by running the Matlab script: `convertAnnotationsDeeplab();`
-5. Run `cd models/deeplab-public-ver2 && ./run_cocostuff.sh && cd ../..` to train and test the network on COCO-Stuff.
+4. Download the base VGG-16 model:
+  - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_vgg16 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/init.caffemodel`
+5. Configure the COCO-Stuff dataset:
+  - Create folders: `mkdir models/deeplab/deeplab-public-ver2/cocostuff && mkdir models/deeplab/deeplab-public-ver2/cocostuff/data`
+  - Create a symbolic link to the images: `cd models/deeplab/cocostuff/data && ln -s ../../../../dataset/images images && cd ../../../..`
+  - Convert the annotations by running the Matlab script: `startup(); convertAnnotationsDeeplab();`
+6. Run `cd models/deeplab && ./run_cocostuff.sh && cd ../..` to train and test the network on COCO-Stuff.
 
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate SLICO superpixels (precomputed using the [code](http://ivrl.epfl.ch/files/content/sites/ivrg/files/supplementary_material/RK_SLICsuperpixels/SLIC_mex.zip) of [Achanta et al.](http://ivrl.epfl.ch/research/superpixels)) with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
