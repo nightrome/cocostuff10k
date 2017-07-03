@@ -21797,30 +21797,31 @@ layer {
   }
 }
 
-# layer {
-#   bottom: "fc1_interp"
-#   top: "fc1_interp_argmax"
-#   name: "fc1_interp_argmax"
-#   type: "ArgMax"
-#   argmax_param {
-#     axis: 1
-#   }
-# }
-# layer {
-#   name: "fc1_mat"
-#   type: "MatWrite"
-# #  bottom: "fc1_interp_argmax"
-#   bottom: "fc1_interp"
-#   include {
-#     phase: TEST
-#   }
-#   mat_write_param {
-#     prefix: "${FEATURE_DIR}/${TEST_SET}/fc1/"
-#     source: "${EXP}/list/${TEST_SET}_id.txt"
-#     strip: 0
-#     period: 1
-#   }
-# }
+#layer {
+#  bottom: "fc1_interp"
+#  top: "fc1_interp_argmax"
+#  name: "fc1_interp_argmax"
+#  type: "ArgMax"
+#  argmax_param {
+#    axis: 1
+#  }
+#}
+
+layer {
+  name: "fc1_mat"
+  type: "MatWrite"
+#  bottom: "fc1_interp_argmax"
+  bottom: "fc1_interp"
+  include {
+    phase: TEST
+  }
+  mat_write_param {
+    prefix: "${FEATURE_DIR}/${TEST_SET}/fc1/"
+    source: "${EXP}/list/${TEST_SET}_id.txt"
+    strip: 0
+    period: 1
+  }
+}
 
 layer {
   name: "accuracy"
@@ -21833,7 +21834,6 @@ layer {
     reset: false
   }
 }
-
 
 layer {
   name: "silence"

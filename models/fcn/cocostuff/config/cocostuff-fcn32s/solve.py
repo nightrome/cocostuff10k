@@ -12,15 +12,12 @@ except:
     pass
 
 weights = 'fcn/ilsvrc-nets/vgg16-fcn.caffemodel'
-#base_net = caffe.Net('fcn/ilsvrc-nets/vgg16-fcn.prototxt', 'fcn/ilsvrc-nets/vgg16-fcn.caffemodel', caffe.TEST)
 
 # init
 caffe.set_device(int(sys.argv[1]))
 caffe.set_mode_gpu()
 
 solver = caffe.SGDSolver('cocostuff/config/cocostuff-fcn32s/solver.prototxt')
-# Modified by Holger: 
-#surgery.transplant(solver.net, base_net)
 solver.net.copy_from(weights)
 
 # surgeries

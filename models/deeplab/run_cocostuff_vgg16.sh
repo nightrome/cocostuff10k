@@ -81,8 +81,6 @@ if [ ${RUN_TEST} -eq 1 ]; then
 				echo Testing net ${EXP}/${NET_ID}
 				FEATURE_DIR=${EXP}/features/${NET_ID}
 				mkdir -p ${FEATURE_DIR}/${TEST_SET}/fc8
-        mkdir -p ${FEATURE_DIR}/${TEST_SET}/fc9
-				mkdir -p ${FEATURE_DIR}/${TEST_SET}/seg_score
 				sed "$(eval echo $(cat sub.sed))" \
 						${CONFIG_DIR}/test.prototxt > ${CONFIG_DIR}/test_${TEST_SET}.prototxt
 				CMD="${CAFFE_BIN} test \
