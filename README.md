@@ -108,7 +108,7 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
   - Create folders: `mkdir models/deeplab/deeplab-public-ver2/cocostuff && mkdir models/deeplab/deeplab-public-ver2/cocostuff/data`
   - Create a symbolic link to the images: `cd models/deeplab/cocostuff/data && ln -s ../../../../dataset/images images && cd ../../../..`
   - Convert the annotations by running the Matlab script: `startup(); convertAnnotationsDeeplab();`
-6. Run `cd models/deeplab && ./run_cocostuff.sh && cd ../..` to train and test the network on COCO-Stuff.
+6. Run `cd models/deeplab && ./run_cocostuff_vgg16.sh && cd ../..` to train and test the network on COCO-Stuff.
 
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate SLICO superpixels (precomputed using the [code](http://ivrl.epfl.ch/files/content/sites/ivrg/files/supplementary_material/RK_SLICsuperpixels/SLIC_mex.zip) of [Achanta et al.](http://ivrl.epfl.ch/research/superpixels)) with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
