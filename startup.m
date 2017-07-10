@@ -11,5 +11,5 @@ if ~strcmp(pwd(), fileparts(mfilename('fullpath')))
 end
 
 % Add folders to path
-addpath('dataset/code');
-addpath('annotator/code');
+addpath(genpath(fullfile('dataset', 'code')));
+addpath(genpath(fullfile('annotator', 'code')));
