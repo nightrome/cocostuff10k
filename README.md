@@ -91,7 +91,7 @@ The hierarchy of labels is stored in `CocoStuffClasses`. To visualize it, run `C
 ## Semantic Segmentation Models
 To encourage further research of stuff and things we provide the trained semantic segmentation model (see Sect. 4.4 in [1]).
 
-### DeepLab
+### DeepLab VGG-16
 Use the following steps to download and setup the DeepLab [4] semantic segmentation model trained on COCO-Stuff. It requires [deeplab-public-ver2](https://bitbucket.org/aquariusjay/deeplab-public-ver2), which is built on [Caffe](caffe.berkeleyvision.org):
 
 1. Install Cuda. I recommend version 7.0. For version 8.0 you will need to apply the fix described [here](https://stackoverflow.com/questions/39274472/error-function-atomicadddouble-double-has-already-been-defined) in step 3.
@@ -102,13 +102,25 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
   - Optionally add CuDNN support or modify library paths in the Makefile.
   - `make all -j8`
   - `cd ../..`
-4. Download the base VGG-16 model:
-  - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_vgg16 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/deeplabv2_vgg16_init.caffemodel`
-5. Configure the COCO-Stuff dataset:
+4. Configure the COCO-Stuff dataset:
   - Create folders: `mkdir models/deeplab/deeplab-public-ver2/cocostuff && mkdir models/deeplab/deeplab-public-ver2/cocostuff/data`
   - Create a symbolic link to the images: `cd models/deeplab/cocostuff/data && ln -s ../../../../dataset/images images && cd ../../../..`
   - Convert the annotations by running the Matlab script: `startup(); convertAnnotationsDeeplab();`
-6. Run `cd models/deeplab && ./run_cocostuff_vgg16.sh && cd ../..` to train and test the network on COCO-Stuff.
+5. Download the base VGG-16 model:
+  - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_vgg16 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/deeplabv2_vgg16_init.caffemodel`
+6. Run `cd models/deeplab && ./run_cocostuff_vgg16.sh` to train and test the network on COCO-Stuff.
+
+### DeepLab ResNet 101
+The default Deeplab model performs center crops of size 513*513 pixels of an image, if any side is larger than that. Since we want to segment the whole image at test time, we choose to resize the images to 513x513, perform the semantic segmentation and then rescale it elsewhere. Note that without the final step, the performance might differ slightly.
+
+1. Follow steps 1-3 of the [DeepLab VGG-16](#deeplab-vgg-16) section above.
+2. Download the base ResNet model:
+  - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_resnet101 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/deeplabv2_resnet101_init.caffemodel`
+3. Rescale the images and annotations:
+  - `cd models/deeplab`
+  - `python rescaleImages.py`
+  - `python rescaleAnnotations.py`
+4. Run `./run_cocostuff_resnet101.sh` to train and test the network on COCO-Stuff.
 
 ## Annotation Tool
 In [1] we present a simple and efficient stuff annotation tool which was used to annotate the COCO-Stuff dataset. It uses a paintbrush tool to annotate SLICO superpixels (precomputed using the [code](http://ivrl.epfl.ch/files/content/sites/ivrg/files/supplementary_material/RK_SLICsuperpixels/SLIC_mex.zip) of [Achanta et al.](http://ivrl.epfl.ch/research/superpixels)) with stuff labels. These annotations are overlaid with the existing pixel-level thing annotations from COCO.
