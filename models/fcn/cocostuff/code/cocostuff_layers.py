@@ -99,6 +99,9 @@ class COCOSTUFFSegDataLayer(caffe.Layer):
         """
         im = Image.open('{}/data/images/{}.jpg'.format(self.cocostuff_dir, idx))
         in_ = np.array(im, dtype=np.float32)
+        if len(in_.shape) != 3:
+          in_ = np.expand_dims(in_, 2)
+          in_ = np.concatenate((in_, in_, in_), axis=2)
         in_ = in_[:,:,::-1]
         in_ -= self.mean
         in_ = in_.transpose((2,0,1))
