@@ -20,7 +20,6 @@ layer {
     root_folder: "${DATA_ROOT}"
     source: "${EXP}/list/${TEST_SET}.txt"
     batch_size: 1
-#    label_type: NONE
     label_type: PIXEL
   }
 }
@@ -21787,6 +21786,7 @@ layer {
 
 
 ##################### original resolution #######################
+
 layer {
   name: "fc1_interp"
   type: "Interp"
@@ -21797,21 +21797,22 @@ layer {
   }
 }
 
-#layer {
-#  bottom: "fc1_interp"
-#  top: "fc1_interp_argmax"
-#  name: "fc1_interp_argmax"
-#  type: "ArgMax"
-#  argmax_param {
-#    axis: 1
-#  }
-#}
+
+layer {
+  bottom: "fc1_interp"
+  top: "fc1_interp_argmax"
+  name: "fc1_interp_argmax"
+  type: "ArgMax"
+  argmax_param {
+    axis: 1
+  }
+}
 
 layer {
   name: "fc1_mat"
   type: "MatWrite"
-#  bottom: "fc1_interp_argmax"
-  bottom: "fc1_interp"
+  bottom: "fc1_interp_argmax"
+#  bottom: "fc1_interp"
   include {
     phase: TEST
   }
@@ -21823,6 +21824,7 @@ layer {
   }
 }
 
+#TODO
 layer {
   name: "accuracy"
   type: "SegAccuracy"

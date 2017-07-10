@@ -598,20 +598,22 @@ layer {
     zoom_factor: 8
   }
 }
-# layer {
-#   bottom: "fc8_interp"
-#   top: "fc8_interp_argmax"
-#   name: "fc8_interp_argmax"
-#   type: "ArgMax"
-#   argmax_param {
-#     axis: 1
-#   }
-# }
+
+layer {
+  bottom: "fc8_interp"
+  top: "fc8_interp_argmax"
+  name: "fc8_interp_argmax"
+  type: "ArgMax"
+  argmax_param {
+    axis: 1
+  }
+}
+
 layer {
   name: "fc8_mat"
   type: "MatWrite"
-#  bottom: "fc8_interp_argmax"
-  bottom: "fc8_interp"
+  bottom: "fc8_interp_argmax"
+#  bottom: "fc8_interp"
   include {
     phase: TEST
   }
