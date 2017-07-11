@@ -71,7 +71,7 @@ fi
 
 if [ ${RUN_TEST} -eq 1 ]; then
     #
-    for TEST_SET in val; do
+    for TEST_SET in val513; do
 				TEST_ITER=`cat ${EXP}/list/${TEST_SET}.txt | wc -l`
 				MODEL=${EXP}/model/${NET_ID}/test.caffemodel
 				if [ ! -f ${MODEL} ]; then
@@ -84,10 +84,10 @@ if [ ${RUN_TEST} -eq 1 ]; then
 				sed "$(eval echo $(cat sub.sed))" \
 						${CONFIG_DIR}/test.prototxt > ${CONFIG_DIR}/test_${TEST_SET}.prototxt
 				CMD="${CAFFE_BIN} test \
-             --model=${CONFIG_DIR}/test_${TEST_SET}.prototxt \
-             --weights=${MODEL} \
-             --gpu=${DEV_ID} \
-             --iterations=${TEST_ITER}"
+             			--model=${CONFIG_DIR}/test_${TEST_SET}.prototxt \
+             			--weights=${MODEL} \
+             			--gpu=${DEV_ID} \
+             			--iterations=${TEST_ITER}"
 				echo Running ${CMD} && ${CMD}
     done
 fi

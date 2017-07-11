@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import scipy.ndimage
 import scipy.misc
@@ -11,7 +13,7 @@ image_tgt = 'cocostuff/data/annotations' + str(tgt_size)
 if not os.path.exists(image_tgt):
     os.makedirs(image_tgt)
 
-# Find image files
+# Resize and copy annotation files
 for file in os.listdir(image_src):
     image_path_src = os.path.join(image_src, file)
     image_path_tgt = os.path.join(image_tgt, file)
