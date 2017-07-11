@@ -23,6 +23,7 @@ Welcome to official homepage of the COCO-Stuff [1] dataset. COCO-Stuff augments 
 - 5 captions per image from COCO [2]
 
 ## Updates
+- 11 Jul 2017: Added working [Deeplab models for Resnet and VGG](#semantic-segmentation-models)
 - 06 Apr 2017: Dataset version 1.1: [Modified label indices](https://github.com/nightrome/cocostuff#label-names--indices)
 - 31 Mar 2017: Published annotations in JSON format
 - 09 Mar 2017: Added label hierarchy scripts
