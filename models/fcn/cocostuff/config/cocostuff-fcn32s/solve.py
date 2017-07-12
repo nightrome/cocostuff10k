@@ -11,14 +11,16 @@ try:
 except:
     pass
 
-weights = 'fcn/ilsvrc-nets/vgg16-fcn.caffemodel'
+base_proto = 'fcn/ilsvrc-nets/vgg16-fcn.prototxt'
+base_weights = 'fcn/ilsvrc-nets/vgg16-fcn.caffemodel'
+base_net = caffe.Net(base_proto, base_weights, caffe.TEST)
 
 # init
 caffe.set_device(int(sys.argv[1]))
 caffe.set_mode_gpu()
 
 solver = caffe.SGDSolver('cocostuff/config/cocostuff-fcn32s/solver.prototxt')
-solver.net.copy_from(weights)
+surgery.transplant(solver.net, base_net)
 
 # surgeries
 interp_layers = [k for k in solver.net.params.keys() if 'up' in k]
