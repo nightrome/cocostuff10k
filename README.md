@@ -79,7 +79,7 @@ The COCO-Stuff annotations are stored in separate .mat files per image. These fi
 Alternatively, we also provide stuff and thing annotations in the [COCO-style JSON format](http://mscoco.org/dataset/#download). The thing annotations are copied from COCO. We encode every stuff class present in an image as a single annotation using the RLE encoding format of COCO. To get the annotations:
 - Either download them: `wget --directory-prefix=dataset/annotations-json http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-10k-v1.1.json
 `
-- Or extract them from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/convertAnnotationsJSON.py).
+- Or extract them from the .mat file annotations using [this Python script](https://github.com/nightrome/cocostuff/blob/master/dataset/code/conversion/convertAnnotationsJSON.py).
 
 ### Label Names & Indices
 To be compatible with COCO, version 1.1 of COCO-Stuff has 91 thing classes (1-91), 91 stuff classes (92-182) and 1 class "unlabeled" (0). Note that 11 of the thing classes from COCO 2015 do not have any segmentation annotations. The classes desk, door and mirror could be either stuff or things and therefore occur in both COCO and COCO-Stuff. To avoid confusion we add the suffix "-stuff" to those classes in COCO-Stuff. The full list of classes can be found [here](https://raw.githubusercontent.com/nightrome/cocostuff/master/dataset/cocostuff-labels.txt).
