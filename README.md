@@ -5,8 +5,8 @@
 <img src="http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/cocostuff-examples.png" alt="COCO-Stuff example annotations" width="100%">
 Welcome to official homepage of the COCO-Stuff [1] dataset. COCO-Stuff augments the popular COCO [2] dataset with pixel-level stuff annotations. These annotations can be used for scene understanding tasks like semantic segmentation, object detection and image captioning.
 
-## Note
-This is the homepage of the COCO-Stuff dataset with 10K images. For the challenge with 65K images (which includes COCO-Stuff 10K), please see the [COCO 2017 Stuff Segmentation Challenge](http://mscoco.org/dataset/#stuff-challenge2017), starting from September 1, 2017. The results of that challenge will be released at the [Joint COCO and Places Recognition Workshop at ICCV 2017](https://places-coco2017.github.io/).
+## COCO 2017 Stuff Segmentation Challenge
+This is the homepage of the COCO-Stuff dataset with 10K images. For the challenge with 65K images (which includes COCO-Stuff 10K), please see the [COCO 2017 Stuff Segmentation Challenge](http://http://cocodataset.org/dataset.htm#stuff-challenge2017), starting from September 1, 2017. The results of that challenge will be released at the [Joint COCO and Places Recognition Workshop at ICCV 2017](https://places-coco2017.github.io/).
 
 ## Overview
 - [Highlights](#highlights)
