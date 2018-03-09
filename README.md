@@ -118,7 +118,7 @@ Use the following steps to download and setup the DeepLab [4] semantic segmentat
 ### DeepLab ResNet 101
 The default Deeplab model performs center crops of size 513*513 pixels of an image, if any side is larger than that. Since we want to segment the whole image at test time, we choose to resize the images to 513x513, perform the semantic segmentation and then rescale it elsewhere. Note that without the final step, the performance might differ slightly.
 
-1. Follow steps 1-3 of the [DeepLab VGG-16](#deeplab-vgg-16) section above.
+1. Follow steps 1-4 of the [DeepLab VGG-16](#deeplab-vgg-16) section above.
 2. Download the base ResNet model:
   - `wget --directory-prefix=models/deeplab/cocostuff/model/deeplabv2_resnet101 http://calvin.inf.ed.ac.uk/wp-content/uploads/data/cocostuffdataset/deeplabv2_resnet101_init.caffemodel`
 3. Rescale the images and annotations:
