@@ -1,4 +1,4 @@
-# COCO-Stuff 10K dataset v1.1
+# COCO-Stuff 10K dataset v1.1 ([outdated](https://github.com/nightrome/cocostuff))
 [Holger Caesar](http://www.it-caesar.com), [Jasper Uijlings](http://homepages.inf.ed.ac.uk/juijling), [Vittorio Ferrari](http://calvin.inf.ed.ac.uk/members/vittoferrari)
 
 ## Overview
@@ -33,6 +33,8 @@ Welcome to official homepage of the COCO-Stuff [1] dataset. COCO-Stuff augments 
 
 ## Results
 The current release of COCO-Stuff-10K publishes both the training and test annotations and users report their performance individually. We invite users to report their results to us to complement this table. In the near future we will extend COCO-Stuff to all images in COCO and organize an official challenge where the test annotations will only be known to the organizers.
+
+For the updated table please click [here](https://github.com/nightrome/cocostuff#results-on-the-val-set-of-coco-stuff-10k).
 
 Method                | Source| Class-average accuracy  | Global accuracy | Mean IOU | FW IOU
 ---                   | ---   | ---                     | ---             | ---      | ---
